@@ -33,7 +33,7 @@
             background: linear-gradient(135deg, #e6e9f0, #eef1f5);
             color: var(--dark);
             line-height: 1.6;
-            padding: 30px;
+            padding: 15px;
             min-height: 100vh;
         }
 
@@ -44,8 +44,8 @@
 
         header {
             text-align: center;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             border-radius: var(--border-radius);
@@ -66,13 +66,13 @@
         }
 
         h1 {
-            font-size: 2.8rem;
+            font-size: clamp(1.8rem, 6vw, 2.2rem);
             font-weight: 700;
             position: relative;
         }
 
         .subtitle {
-            font-size: 1.3rem;
+            font-size: clamp(0.9rem, 4vw, 1.1rem);
             opacity: 0.9;
             font-weight: 300;
             position: relative;
@@ -80,14 +80,14 @@
 
         .app-container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            grid-template-columns: 1fr;
+            gap: 20px;
         }
 
         .input-section,
         .preview-section {
             background: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -100,34 +100,34 @@
         }
 
         .section-title {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+            font-size: clamp(1.4rem, 5vw, 1.6rem);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
             border-bottom: 3px solid var(--secondary);
             color: var(--primary);
             font-weight: 600;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 500;
             color: var(--dark);
-            font-size: 0.95rem;
+            font-size: clamp(0.85rem, 3.5vw, 0.9rem);
         }
 
         input,
         select,
         textarea {
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 3.5vw, 0.95rem);
             transition: all 0.3s ease;
             background: #f9fafb;
         }
@@ -143,20 +143,22 @@
 
         textarea {
             resize: vertical;
-            min-height: 80px;
+            min-height: 70px;
         }
 
         .btn {
             display: inline-block;
-            padding: 12px 25px;
+            padding: 10px 20px;
             background-color: var(--secondary);
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 3.5vw, 0.95rem);
             font-weight: 600;
             transition: all 0.3s ease;
+            width: 100%;
+            text-align: center;
         }
 
         .btn:hover {
@@ -183,73 +185,77 @@
 
         .btn-group {
             display: flex;
-            gap: 15px;
-            margin-top: 25px;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
         }
 
         .invoice-preview {
             border: 1px solid #e2e8f0;
             border-radius: 6px;
-            padding: 20px;
+            padding: 15px;
             background: white;
-            font-size: 0.9rem;
+            font-size: clamp(0.8rem, 3vw, 0.85rem);
+            overflow-x: auto;
         }
 
         .invoice-header {
             position: relative;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
             border-bottom: 2px solid var(--primary);
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            flex-wrap: wrap;
         }
 
         .invoice-title {
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 4vw, 1.1rem);
             font-weight: 700;
-            margin-top: 20px;
+            margin-top: 15px;
             color: var(--primary);
             text-align: center;
             flex: 1;
         }
 
         .invoice-meta {
-            font-size: 1rem;
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
             color: var(--dark);
         }
 
         .company-info-container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         .company-info {
-            font-size: 0.85rem;
+            font-size: clamp(0.75rem, 3vw, 0.8rem);
         }
 
         .invoice-details {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-            font-size: 0.85rem;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: clamp(0.75rem, 3vw, 0.8rem);
         }
 
         .invoice-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .invoice-table th,
         .invoice-table td {
             border: 1px solid #e2e8f0;
-            padding: 8px;
+            padding: 6px;
             text-align: left;
-            font-size: 0.8rem;
+            font-size: clamp(0.7rem, 2.5vw, 0.75rem);
+            word-wrap: break-word;
         }
 
         .invoice-table th {
@@ -260,83 +266,169 @@
 
         .invoice-summary {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-            font-size: 0.85rem;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: clamp(0.75rem, 3vw, 0.8rem);
         }
 
         .summary-item {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
+            padding: 6px 0;
             border-bottom: 1px dashed #e2e8f0;
         }
 
         .total-row {
             font-weight: 700;
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 3.5vw, 0.95rem);
             border-bottom: 2px solid var(--primary);
         }
 
         .terms-conditions {
-            margin-top: 20px;
-            font-size: 0.75rem;
+            margin-top: 15px;
+            font-size: clamp(0.65rem, 2.5vw, 0.7rem);
             background: #f8fafc;
-            padding: 15px;
+            padding: 10px;
             border-radius: 6px;
         }
 
         .signature-area {
-            margin-top: 25px;
+            margin-top: 20px;
             display: flex;
             justify-content: space-between;
-            font-size: 0.8rem;
+            font-size: clamp(0.7rem, 2.5vw, 0.75rem);
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .signature-box {
-            width: 160px;
+            width: clamp(120px, 40vw, 140px);
             border-top: 1px solid var(--dark);
-            padding-top: 8px;
+            padding-top: 6px;
             text-align: center;
         }
 
         .amount-in-words {
-            margin-top: 10px;
-            font-size: 0.85rem;
+            margin-top: 8px;
+            font-size: clamp(0.75rem, 3vw, 0.8rem);
             font-style: italic;
         }
 
-        @media (max-width: 1024px) {
-            .app-container {
-                grid-template-columns: 1fr;
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
             }
-        }
 
-        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 25px;
+            }
+
+            .input-section,
+            .preview-section {
+                padding: 25px;
+            }
+
+            .btn-group {
+                flex-direction: row;
+                gap: 15px;
+            }
+
+            .btn {
+                width: auto;
+            }
+
             .invoice-details,
             .invoice-summary,
             .company-info-container {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
             }
 
+            .invoice-table th,
+            .invoice-table td {
+                padding: 8px;
+            }
+        }
+
+        @media (min-width: 1024px) {
             body {
-                padding: 15px;
+                padding: 30px;
+            }
+
+            .app-container {
+                gap: 30px;
+            }
+
+            .input-section,
+            .preview-section {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 2.8rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
             }
 
             .container {
                 max-width: 100%;
             }
+
+            header {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: clamp(1.5rem, 5vw, 1.8rem);
+            }
+
+            .section-title {
+                font-size: clamp(1.2rem, 4.5vw, 1.4rem);
+            }
+
+            .form-group {
+                min-width: 100%;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .btn {
+                padding: 8px 15px;
+                font-size: clamp(0.85rem, 3.5vw, 0.9rem);
+            }
+
+            .invoice-preview {
+                padding: 10px;
+                font-size: clamp(0.7rem, 2.5vw, 0.75rem);
+            }
+
+            .invoice-table th,
+            .invoice-table td {
+                padding: 5px;
+                font-size: clamp(0.65rem, 2vw, 0.7rem);
+            }
         }
 
         .alert {
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 10px;
+            margin-bottom: 15px;
             border-radius: 6px;
             font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .alert-success {
@@ -351,34 +443,29 @@
 
         .form-row {
             display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .form-row .form-group {
-            flex: 1;
-            min-width: 200px;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .product-entry {
             border: 1px solid #e2e8f0;
-            padding: 15px;
+            padding: 10px;
             border-radius: 6px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             position: relative;
         }
 
         .remove-product-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 5px;
+            right: 5px;
             background-color: var(--danger);
             color: white;
             border: none;
             border-radius: 4px;
-            padding: 5px 10px;
+            padding: 5px 8px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: clamp(0.8rem, 3vw, 0.85rem);
         }
 
         .remove-product-btn:hover {
@@ -391,6 +478,34 @@
 
         .gst-rate-group.hidden {
             display: none;
+        }
+
+        /* Ensure PDF styles are consistent across devices */
+        @media print {
+            .invoice-preview {
+                width: 180mm !important;
+                padding: 10mm !important;
+                font-size: 10px !important;
+                line-height: 1.4 !important;
+            }
+
+            .invoice-table {
+                font-size: 8px !important;
+                padding: 4px !important;
+            }
+
+            .invoice-table th,
+            .invoice-table td {
+                padding: 5px !important;
+                font-size: 8px !important;
+                word-wrap: break-word !important;
+                max-width: 35px !important;
+            }
+
+            .invoice-meta {
+                font-size: 9px !important;
+                font-weight: 600 !important;
+            }
         }
     </style>
 </head>
@@ -497,7 +612,7 @@
                 </div>
 
                 <div id="successAlert" class="alert alert-success hidden">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
                         <polyline points="22 4 12 14.01 9 11.01"></polyline>
                     </svg>
@@ -886,6 +1001,8 @@
             function downloadPDF() {
                 const element = document.getElementById('invoicePreview');
                 const originalStyles = element.style.cssText;
+
+                // Apply PDF-specific styles
                 element.style.width = '180mm';
                 element.style.padding = '10mm';
                 element.style.fontSize = '10px';
@@ -908,57 +1025,61 @@
                     meta.style.fontWeight = '600';
                 });
 
-                html2canvas(element, {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: '#ffffff',
-                    width: element.scrollWidth,
-                    height: element.scrollHeight,
-                    logging: false,
-                    imageTimeout: 0
-                }).then((canvas) => {
-                    const imgData = canvas.toDataURL('image/jpeg', 0.8);
-                    const { jsPDF } = window.jspdf;
-                    const pdf = new jsPDF({
-                        orientation: 'portrait',
-                        unit: 'mm',
-                        format: 'a4',
-                        compress: true
+                // Add a slight delay to ensure rendering on mobile devices
+                setTimeout(() => {
+                    html2canvas(element, {
+                        scale: window.devicePixelRatio > 1 ? 2 : 3, // Adjust scale for mobile high-DPI screens
+                        useCORS: true,
+                        backgroundColor: '#ffffff',
+                        width: element.scrollWidth,
+                        height: element.scrollHeight,
+                        logging: false,
+                        imageTimeout: 0
+                    }).then((canvas) => {
+                        const imgData = canvas.toDataURL('image/jpeg', 0.8);
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF({
+                            orientation: 'portrait',
+                            unit: 'mm',
+                            format: 'a4',
+                            compress: true
+                        });
+
+                        const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
+                        const pdfHeight = pdf.internal.pageSize.getHeight() - 20;
+                        const imgWidth = pdfWidth;
+                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                        const scale = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
+                        const scaledWidth = canvas.width * scale;
+                        const scaledHeight = canvas.height * scale;
+
+                        pdf.addImage(imgData, 'JPEG', 10, 10, scaledWidth, scaledHeight);
+
+                        // Restore original styles
+                        element.style.cssText = originalStyles;
+                        tables.forEach(table => {
+                            table.style.fontSize = '';
+                            table.style.padding = '';
+                        });
+                        cells.forEach(cell => {
+                            cell.style.padding = '';
+                            cell.style.fontSize = '';
+                            cell.style.wordWrap = '';
+                            cell.style.maxWidth = '';
+                        });
+                        metas.forEach(meta => {
+                            meta.style.fontSize = '';
+                            meta.style.fontWeight = '';
+                        });
+
+                        pdf.save(`${document.getElementById('customerName').value || 'generated'}.pdf`);
+                    }).catch((error) => {
+                        console.error('Error generating PDF:', error);
+                        alert('Error generating PDF. Please try again.');
+                        element.style.cssText = originalStyles;
                     });
-
-                    const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
-                    const pdfHeight = pdf.internal.pageSize.getHeight() - 20;
-                    const imgWidth = pdfWidth;
-                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-                    const scale = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
-                    const scaledWidth = canvas.width * scale;
-                    const scaledHeight = canvas.height * scale;
-
-                    pdf.addImage(imgData, 'JPEG', 10, 10, scaledWidth, scaledHeight);
-
-                    element.style.cssText = originalStyles;
-                    tables.forEach(table => {
-                        table.style.fontSize = '';
-                        table.style.padding = '';
-                    });
-                    cells.forEach(cell => {
-                        cell.style.padding = '';
-                        cell.style.fontSize = '';
-                        cell.style.wordWrap = '';
-                        cell.style.maxWidth = '';
-                    });
-                    metas.forEach(meta => {
-                        meta.style.fontSize = '';
-                        meta.style.fontWeight = '';
-                    });
-
-                    pdf.save(`${document.getElementById('customerName').value || 'generated'}.pdf`);
-                }).catch((error) => {
-                    console.error('Error generating PDF:', error);
-                    alert('Error generating PDF. Please try again.');
-                    element.style.cssText = originalStyles;
-                });
+                }, 100); // 100ms delay for rendering stability
             }
 
             function formatDate(dateString) {
