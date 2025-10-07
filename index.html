@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GST Invoice Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary: #1a3c5e;
+            --secondary: #007bff;
+            --accent: #ff4d4d;
+            --light: #f8fafc;
+            --dark: #1f2a44;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --border-radius: 8px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e6e9f0, #eef1f5);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), transparent);
+            opacity: 0.3;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            font-weight: 300;
+            position: relative;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .input-section,
+        .preview-section {
+            background: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-section:hover,
+        .preview-section:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+            background: white;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .invoice-preview {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 20px;
+            background: white;
+            font-size: 0.9rem;
+        }
+
+        .invoice-header {
+            position: relative;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .invoice-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 20px;
+            color: var(--primary);
+            text-align: center;
+            flex: 1;
+        }
+
+        .invoice-meta {
+            font-size: 0.85rem;
+            color: var(--dark);
+        }
+
+        .company-info-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .company-info {
+            font-size: 0.85rem;
+        }
+
+        .invoice-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .invoice-table th,
+        .invoice-table td {
+            border: 1px solid #e2e8f0;
+            padding: 8px;
+            text-align: left;
+            font-size: 0.8rem;
+        }
+
+        .invoice-table th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .invoice-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .total-row {
+            font-weight: 700;
+            font-size: 1rem;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .terms-conditions {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .signature-area {
+            margin-top: 25px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+        }
+
+        .signature-box {
+            width: 160px;
+            border-top: 1px solid var(--dark);
+            padding-top: 8px;
+            text-align: center;
+        }
+
+        @media (max-width: 1024px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .invoice-details,
+            .invoice-summary,
+            .company-info-container {
+                grid-template-columns: 1fr;
+            }
+
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>MAHI ENTERPRICE</h1>
+        </header>
+
+        <div class="app-container">
+            <section class="input-section">
+                <h2 class="section-title">Invoice Details</h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="invoiceNo">Invoice Number</label>
+                        <input type="text" id="invoiceNo" placeholder="e.g., 2025-26/36">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="invoiceDate">Invoice Date</label>
+                        <input type="date" id="invoiceDate">
+                    </div>
+                </div>
+
+                <h3 class="section-title">Customer Information</h3>
+
+                <div class="form-group">
+                    <label for="customerName">Customer Name</label>
+                    <input type="text" id="customerName" placeholder="e.g., Swastik Digital">
+                </div>
+
+                <div class="form-group">
+                    <label for="customerAddress">Customer Address</label>
+                    <textarea id="customerAddress" rows="3" placeholder="Full address of the customer"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="customerGST">Customer GSTIN</label>
+                    <input type="text" id="customerGST" placeholder="e.g., 24ADDF5229001ZM">
+                </div>
+
+                <h3 class="section-title">Product Information</h3>
+
+                <div class="form-group">
+                    <label for="productDesc">Product Description</label>
+                    <input type="text" id="productDesc" placeholder="e.g., PARTS SPONGE ROLL">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="hsnCode">HSN Code</label>
+                        <input type="text" id="hsnCode" placeholder="e.g., 8479">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantity">Quantity</label>
+                        <input type="number" id="quantity" placeholder="e.g., 2">
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="price">Price per Unit (₹)</label>
+                        <input type="number" id="price" placeholder="e.g., 12000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gstRate">GST Rate (%)</label>
+                        <select id="gstRate">
+                            <option value="5">5%</option>
+                            <option value="12">12%</option>
+                            <option value="18" selected>18%</option>
+                            <option value="28">28%</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button id="generateBtn" class="btn">Generate Invoice</button>
+                    <button id="resetBtn" class="btn btn-danger">Reset Form</button>
+                </div>
+
+                <div id="successAlert" class="alert alert-success hidden">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    Invoice generated successfully! You can now download it as PDF.
+                </div>
+            </section>
+
+            <section class="preview-section">
+                <h2 class="section-title">Invoice Preview</h2>
+
+                <div class="invoice-preview" id="invoicePreview">
+                    <div class="invoice-header">
+                        <div class="invoice-meta">GSTIN: 24BZBPG6012M1ZL</div>
+                        <div class="invoice-title">TAX INVOICE</div>
+                        <div class="invoice-meta">Original Copy</div>
+                    </div>
+                    <div style="text-align: center; font-size:1em;">
+                        <div><strong>MAHI ENTERPRISE</strong></div>
+                        <div>62, GOPINATH SOCIETY SEC-3, KATARGAM ROAD, SURAT-395004</div>
+                        <div>Tel.: 7201017618 | email: mahenterprise972@gmail.com</div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button id="downloadBtn" class="btn btn-success" disabled>Download PDF</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('invoiceDate').value = today;
+
+            document.getElementById('generateBtn').addEventListener('click', generateInvoice);
+            document.getElementById('resetBtn').addEventListener('click', resetForm);
+            document.getElementById('downloadBtn').addEventListener('click', downloadPDF);
+
+            function generateInvoice() {
+                const invoiceNo = document.getElementById('invoiceNo').value || '2025-26/36';
+                const invoiceDate = document.getElementById('invoiceDate').value;
+                const customerName = document.getElementById('customerName').value || 'Swastik Digital';
+                const customerAddress = document.getElementById('customerAddress').value || 'Plot No. 285, 1st Floor, New Building Road No.2, G.I.D.C Sachin, Surat.(Guj)';
+                const customerGST = document.getElementById('customerGST').value || '24ADDF5229001ZM';
+                const productDesc = document.getElementById('productDesc').value || 'PARTS SPONGE ROLL';
+                const hsnCode = document.getElementById('hsnCode').value || '8479';
+                const quantity = parseFloat(document.getElementById('quantity').value) || 2;
+                const price = parseFloat(document.getElementById('price').value) || 12000;
+                const gstRate = parseFloat(document.getElementById('gstRate').value) || 18;
+
+                const taxableAmount = quantity * price;
+                const cgstRate = gstRate / 2;
+                const sgstRate = gstRate / 2;
+                const cgstAmount = (taxableAmount * cgstRate) / 100;
+                const sgstAmount = (taxableAmount * sgstRate) / 100;
+                const totalTax = cgstAmount + sgstAmount;
+                const grandTotal = taxableAmount + totalTax;
+
+                const formattedDate = formatDate(invoiceDate);
+
+                const invoiceHTML = `
+                    <div class="invoice-header">
+                        <div class="invoice-meta">GSTIN : 24BZBPG6012M1ZL</div>
+                        <div class="invoice-title">TAX INVOICE</div>
+                        <div class="invoice-meta">Original Copy</div>
+                    </div>
+                    <div style="text-align: center; font-size:1em;">
+                    <div><strong>MAHI ENTERPRISE</strong></div>
+                    <div>62, GOPINATH SOCIETY SEC-3, KATARGAM ROAD, SURAT-395004</div>
+                    <div>Tel. : 7201017618 | email : mahenterprise972@gmail.com</div>
+                    </div>
+                    
+                    <div class="invoice-details">
+                        <div>
+                            <div><strong>Invoice No.</strong> : ${invoiceNo}</div>
+                            <div><strong>Date of Invoice</strong> : ${formattedDate}</div>
+                        </div>
+                        <div>
+                            <div><strong>Place of Supply</strong> : Gujarat (24)</div>
+                            <div><strong>Reverse Charge</strong> : N</div>
+                        </div>
+                    </div>
+                    
+                    <div class="company-info-container">
+                        <div class="company-info">
+                            <div><strong>Billed to</strong></div>
+                            <div>${customerName}</div>
+                            <div>${customerAddress}</div>
+                            <div>GSTIN / UIN: ${customerGST}</div>
+                        </div>
+                        <div class="company-info">
+                            <div><strong>Shipped to</strong></div>
+                            <div>${customerName}</div>
+                            <div>${customerAddress}</div>
+                            <div>GSTIN / UIN : ${customerGST}</div>
+                        </div>
+                    </div>
+                    
+                    <table class="invoice-table">
+                        <thead>
+                            <tr>
+                                <th>S.N.</th>
+                                <th>Description of Goods</th>
+                                <th>HSN/SAC Code</th>
+                                <th>Qty.</th>
+                                <th>Price</th>
+                                <th>CGST Rate</th>
+                                <th>CGST Amount</th>
+                                <th>SGST Rate</th>
+                                <th>SGST Amount</th>
+                                <th>Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1.</td>
+                                <td>${productDesc}</td>
+                                <td>${hsnCode}</td>
+                                <td>${quantity.toFixed(2)}</td>
+                                <td>${price.toFixed(2)}</td>
+                                <td>${cgstRate.toFixed(2)} %</td>
+                                <td>₹ ${cgstAmount.toFixed(2)}</td>
+                                <td>${sgstRate.toFixed(2)} %</td>
+                                <td>₹ ${sgstAmount.toFixed(2)}</td>
+                                <td>₹ ${grandTotal.toFixed(2)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="invoice-summary">
+                        <div>
+                            <div class="summary-item">
+                                <span>Quantity</span>
+                                <span>${quantity.toFixed(2)}</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Tax rate</span>
+                                <span>${gstRate}%</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Taxable Amt.</span>
+                                <span>₹ ${taxableAmount.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="summary-item">
+                                <span>CGST Amt.</span>
+                                <span>₹ ${cgstAmount.toFixed(2)}</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>SGST Amt.</span>
+                                <span>₹ ${sgstAmount.toFixed(2)}</span>
+                            </div>
+                            <div class="summary-item total-row">
+                                <span>Total Tax</span>
+                                <span>₹ ${totalTax.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-item total-row">
+                        <span>Total Amount</span>
+                        <span>₹ ${grandTotal.toFixed(2)}</span>
+                    </div>
+                    
+                    <div class="terms-conditions">
+                        <p><strong>Declaration</strong></p>
+                        <p>BANK NAME - HDFC BANK</p>
+                        <p>A/C NO : 50200104234591 IFSC CODE : HDFC0000251 BRANCH : RING ROAD BRANCH</p>
+                        
+                        <p><strong>Terms & Conditions</strong></p>
+                        <p>E.A. O.E.</p>
+                        <p>1. Goods once sold will not be taken back.</p>
+                        <p>2. Interest @ 18% p.a. will be charged if the payment is not made with in the stipulated time.</p>
+                        <p>3. Subject to 'SURAT' Jurisdiction only.</p>
+                    </div>
+                    
+                    <div class="signature-area">
+                        <div class="signature-box">
+                            Receiver's Signature
+                        </div>
+                        <div class="signature-box">
+                            For MAHI ENTERPRISE<br>Authorised Signatory
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('invoicePreview').innerHTML = invoiceHTML;
+                document.getElementById('downloadBtn').disabled = false;
+                document.getElementById('successAlert').classList.remove('hidden');
+                document.querySelector('.preview-section').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function resetForm() {
+                document.getElementById('invoiceNo').value = '';
+                document.getElementById('invoiceDate').value = today;
+                document.getElementById('customerName').value = '';
+                document.getElementById('customerAddress').value = '';
+                document.getElementById('customerGST').value = '';
+                document.getElementById('productDesc').value = '';
+                document.getElementById('hsnCode').value = '';
+                document.getElementById('quantity').value = '';
+                document.getElementById('price').value = '';
+                document.getElementById('gstRate').value = '18';
+
+                document.getElementById('invoicePreview').innerHTML = `
+                    <div class="invoice-header">
+                        <div class="invoice-meta">GSTIN: 24BZBPG6012M1ZL</div>
+                        <div class="invoice-title">TAX INVOICE</div>
+                        <div class="invoice-meta">Original Copy</div>
+                    </div>
+                    <div style="text-align: center; font-size:1em;">
+                    <div><strong>MAHI ENTERPRISE</strong></div>
+                    <div>62, GOPINATH SOCIETY SEC-3, KATARGAM ROAD, SURAT-395004</div>
+                    <div>Tel.: 7201017618 | email: mahenterprise972@gmail.com</div>
+                    </div>
+                `;
+                document.getElementById('downloadBtn').disabled = true;
+                document.getElementById('successAlert').classList.add('hidden');
+            }
+
+            function downloadPDF() {
+                const element = document.getElementById('invoicePreview');
+                const originalStyles = element.style.cssText;
+                element.style.width = '180mm';
+                element.style.padding = '10mm';
+                element.style.fontSize = '10px';
+                element.style.lineHeight = '1.4';
+                const tables = element.querySelectorAll('.invoice-table');
+                tables.forEach(table => {
+                    table.style.fontSize = '8px';
+                    table.style.padding = '4px';
+                });
+                const cells = element.querySelectorAll('.invoice-table th, .invoice-table td');
+                cells.forEach(cell => {
+                    cell.style.padding = '5px';
+                    cell.style.fontSize = '8px';
+                    cell.style.wordWrap = 'break-word';
+                    cell.style.maxWidth = '35px';
+                });
+                const metas = element.querySelectorAll('.invoice-meta');
+                metas.forEach(meta => {
+                    meta.style.fontSize = '9px';
+                    meta.style.fontWeight = '600';
+                });
+
+                html2canvas(element, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    width: element.scrollWidth,
+                    height: element.scrollHeight,
+                    logging: false,
+                    imageTimeout: 0
+                }).then((canvas) => {
+                    const imgData = canvas.toDataURL('image/jpeg', 0.8);
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF({
+                        orientation: 'portrait',
+                        unit: 'mm',
+                        format: 'a4',
+                        compress: true
+                    });
+
+                    const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
+                    const pdfHeight = pdf.internal.pageSize.getHeight() - 20;
+                    const imgWidth = pdfWidth;
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                    const scale = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
+                    const scaledWidth = canvas.width * scale;
+                    const scaledHeight = canvas.height * scale;
+
+                    pdf.addImage(imgData, 'JPEG', 10, 10, scaledWidth, scaledHeight);
+
+                    element.style.cssText = originalStyles;
+                    tables.forEach(table => {
+                        table.style.fontSize = '';
+                        table.style.padding = '';
+                    });
+                    cells.forEach(cell => {
+                        cell.style.padding = '';
+                        cell.style.fontSize = '';
+                        cell.style.wordWrap = '';
+                        cell.style.maxWidth = '';
+                    });
+                    metas.forEach(meta => {
+                        meta.style.fontSize = '';
+                        meta.style.fontWeight = '';
+                    });
+
+                    pdf.save(`${document.getElementById('customerName').value || 'generated'}.pdf`);
+                }).catch((error) => {
+                    console.error('Error generating PDF:', error);
+                    alert('Error generating PDF. Please try again.');
+                    element.style.cssText = originalStyles;
+                });
+            }
+
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}-${month}-${year}`;
+            }
+        });
+    </script>
+</body>
+
+</html>
