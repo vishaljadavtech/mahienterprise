@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAHI ENTERPRICE | Invoice Generator</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <title>MAHI ENTERPRISE | Invoice Generator</title>
+    <script src="jspdf.min.js"></script>
+    <script src="html2canvas.min.js"></script>
     <style>
         :root {
             --primary: #1a3c5e;
@@ -215,7 +215,7 @@
         }
 
         .invoice-meta {
-            font-size: 0.85rem;
+            font-size: 1rem;
             color: var(--dark);
         }
 
@@ -281,7 +281,7 @@
 
         .terms-conditions {
             margin-top: 20px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             background: #f8fafc;
             padding: 15px;
             border-radius: 6px;
@@ -301,6 +301,12 @@
             text-align: center;
         }
 
+        .amount-in-words {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
         @media (max-width: 1024px) {
             .app-container {
                 grid-template-columns: 1fr;
@@ -308,7 +314,6 @@
         }
 
         @media (max-width: 768px) {
-
             .invoice-details,
             .invoice-summary,
             .company-info-container {
@@ -379,13 +384,21 @@
         .remove-product-btn:hover {
             background-color: #c82333;
         }
+
+        .gst-rate-group {
+            transition: opacity 0.3s ease;
+        }
+
+        .gst-rate-group.hidden {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <header>
-            <h1>MAHI ENTERPRICE</h1>
+            <h1>MAHI ENTERPRISE</h1>
         </header>
 
         <div class="app-container">
@@ -401,6 +414,21 @@
                     <div class="form-group">
                         <label for="invoiceDate">Invoice Date</label>
                         <input type="date" id="invoiceDate">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="placeOfSupply">Place of Supply</label>
+                        <input type="text" id="placeOfSupply" placeholder="e.g., Gujarat (24)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="includeTax">Include Tax</label>
+                        <select id="includeTax">
+                            <option value="yes">Yes (Tax Invoice)</option>
+                            <option value="no">No (Regular Invoice)</option>
+                        </select>
                     </div>
                 </div>
 
@@ -449,7 +477,7 @@
                                 <input type="number" id="price_0" placeholder="e.g., 12000">
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group gst-rate-group">
                                 <label for="gstRate_0">GST Rate (%)</label>
                                 <select id="gstRate_0">
                                     <option value="5">5%</option>
@@ -483,11 +511,11 @@
                 <div class="invoice-preview" id="invoicePreview">
                     <div class="invoice-header">
                         <div class="invoice-meta">GSTIN: 24BZBPG6012M1ZL</div>
-                        <div class="invoice-title">TAX INVOICE</div>
+                        <div class="invoice-title">INVOICE</div>
                         <div class="invoice-meta">Original Copy</div>
                     </div>
-                    <div style="text-align: center; font-size:1em;">
-                        <div><strong>MAHI ENTERPRISE</strong></div>
+                    <div style="text-align: center; font-size:1.2em;">
+                        <div style="font-size: 2em;"><strong>MAHI ENTERPRISE</strong></div>
                         <div>62, GOPINATH SOCIETY SEC-3, KATARGAM ROAD, SURAT-395004</div>
                         <div>Tel.: 7201017618 | email: mahenterprise972@gmail.com</div>
                     </div>
@@ -511,9 +539,52 @@
             document.getElementById('generateBtn').addEventListener('click', generateInvoice);
             document.getElementById('resetBtn').addEventListener('click', resetForm);
             document.getElementById('downloadBtn').addEventListener('click', downloadPDF);
+            document.getElementById('includeTax').addEventListener('change', toggleGstFields);
+
+            function toggleGstFields() {
+                const includeTax = document.getElementById('includeTax').value === 'yes';
+                const gstFields = document.querySelectorAll('.gst-rate-group');
+                gstFields.forEach(field => {
+                    field.classList.toggle('hidden', !includeTax);
+                });
+            }
+
+            // Initialize GST fields visibility on page load
+            toggleGstFields();
+
+            function numberToWords(num) {
+                const ones = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 
+                              'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+                const tens = ['Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+                const thousands = ['Thousand', 'Lakh', 'Crore'];
+
+                if (num === 0) return 'Zero';
+
+                function convertBelowThousand(n) {
+                    if (n < 20) return ones[n];
+                    if (n < 100) return tens[Math.floor(n / 10) - 2] + (n % 10 ? ' ' + ones[n % 10] : '');
+                    return ones[Math.floor(n / 100)] + ' Hundred' + (n % 100 ? ' and ' + convertBelowThousand(n % 100) : '');
+                }
+
+                let result = '';
+                let crore = Math.floor(num / 10000000);
+                num %= 10000000;
+                let lakh = Math.floor(num / 100000);
+                num %= 100000;
+                let thousand = Math.floor(num / 1000);
+                num %= 1000;
+
+                if (crore) result += convertBelowThousand(crore) + ' ' + thousands[2] + ' ';
+                if (lakh) result += convertBelowThousand(lakh) + ' ' + thousands[1] + ' ';
+                if (thousand) result += convertBelowThousand(thousand) + ' ' + thousands[0] + ' ';
+                if (num) result += convertBelowThousand(num);
+
+                return result.trim() + ' Only';
+            }
 
             function addProduct() {
                 productCount++;
+                const includeTax = document.getElementById('includeTax').value === 'yes';
                 const productEntry = document.createElement('div');
                 productEntry.className = 'product-entry';
                 productEntry.innerHTML = `
@@ -537,7 +608,7 @@
                             <label for="price_${productCount}">Price per Unit (₹)</label>
                             <input type="number" id="price_${productCount}" placeholder="e.g., 12000">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group gst-rate-group ${includeTax ? '' : 'hidden'}">
                             <label for="gstRate_${productCount}">GST Rate (%)</label>
                             <select id="gstRate_${productCount}">
                                 <option value="5">5%</option>
@@ -554,6 +625,8 @@
             function generateInvoice() {
                 const invoiceNo = document.getElementById('invoiceNo').value || '2025-26/36';
                 const invoiceDate = document.getElementById('invoiceDate').value;
+                const placeOfSupply = document.getElementById('placeOfSupply').value || 'Gujarat (24)';
+                const includeTax = document.getElementById('includeTax').value === 'yes';
                 const customerName = document.getElementById('customerName').value || 'Swastik Digital';
                 const customerAddress = document.getElementById('customerAddress').value || 'Plot No. 285, 1st Floor, New Building Road No.2, G.I.D.C Sachin, Surat.(Guj)';
                 const customerGST = document.getElementById('customerGST').value || '24ADDF5229001ZM';
@@ -570,13 +643,13 @@
                     const hsnCode = entry.querySelector(`#hsnCode_${index}`).value || '8479';
                     const quantity = parseFloat(entry.querySelector(`#quantity_${index}`).value) || 2;
                     const price = parseFloat(entry.querySelector(`#price_${index}`).value) || 12000;
-                    const gstRate = parseFloat(entry.querySelector(`#gstRate_${index}`).value) || 18;
+                    const gstRate = includeTax ? parseFloat(entry.querySelector(`#gstRate_${index}`).value) || 18 : 0;
 
                     const taxableAmount = quantity * price;
-                    const cgstRate = gstRate / 2;
-                    const sgstRate = gstRate / 2;
-                    const cgstAmount = (taxableAmount * cgstRate) / 100;
-                    const sgstAmount = (taxableAmount * sgstRate) / 100;
+                    const cgstRate = includeTax ? gstRate / 2 : 0;
+                    const sgstRate = includeTax ? gstRate / 2 : 0;
+                    const cgstAmount = includeTax ? (taxableAmount * cgstRate) / 100 : 0;
+                    const sgstAmount = includeTax ? (taxableAmount * sgstRate) / 100 : 0;
                     const totalTax = cgstAmount + sgstAmount;
                     const grandTotal = taxableAmount + totalTax;
 
@@ -600,7 +673,9 @@
 
                 const totalTax = totalCgstAmount + totalSgstAmount;
                 const grandTotal = totalTaxableAmount + totalTax;
+                const amountInWords = numberToWords(Math.round(grandTotal));
                 const formattedDate = formatDate(invoiceDate);
+                const invoiceTitle = includeTax ? 'TAX INVOICE' : 'INVOICE';
 
                 let tableRows = '';
                 products.forEach((product, index) => {
@@ -611,10 +686,12 @@
                             <td>${product.hsnCode}</td>
                             <td>${product.quantity.toFixed(2)}</td>
                             <td>${product.price.toFixed(2)}</td>
+                            ${includeTax ? `
                             <td>${product.cgstRate.toFixed(2)} %</td>
                             <td>₹ ${product.cgstAmount.toFixed(2)}</td>
                             <td>${product.sgstRate.toFixed(2)} %</td>
                             <td>₹ ${product.sgstAmount.toFixed(2)}</td>
+                            ` : ''}
                             <td>₹ ${product.grandTotal.toFixed(2)}</td>
                         </tr>
                     `;
@@ -622,14 +699,14 @@
 
                 const invoiceHTML = `
                     <div class="invoice-header">
-                        <div class="invoice-meta">GSTIN : 24BZBPG6012M1ZL</div>
-                        <div class="invoice-title">TAX INVOICE</div>
+                        <div class="invoice-meta">GSTIN: 24BZBPG6012M1ZL</div>
+                        <div class="invoice-title">${invoiceTitle}</div>
                         <div class="invoice-meta">Original Copy</div>
                     </div>
-                    <div style="text-align: center; font-size:1em;">
-                    <div><strong>MAHI ENTERPRISE</strong></div>
-                    <div>62, GOPINATH SOCIETY SEC-3, KATARGAM ROAD, SURAT-395004</div>
-                    <div>Tel. : 7201017618 | email : mahenterprise972@gmail.com</div>
+                    <div style="text-align: center; font-size:1.2em;">
+                        <div style="font-size: 2em;"><strong>MAHI ENTERPRISE</strong></div>
+                        <div>62, GOPINATH SOCIETY SEC-3, KATARGAM ROAD, SURAT-395004</div>
+                        <div>Tel.: 7201017618 | email: mahenterprise972@gmail.com</div>
                     </div>
                     
                     <div class="invoice-details">
@@ -638,7 +715,7 @@
                             <div><strong>Date of Invoice</strong> : ${formattedDate}</div>
                         </div>
                         <div>
-                            <div><strong>Place of Supply</strong> : Gujarat (24)</div>
+                            <div><strong>Place of Supply</strong> : ${placeOfSupply}</div>
                             <div><strong>Reverse Charge</strong> : N</div>
                         </div>
                     </div>
@@ -654,7 +731,7 @@
                             <div><strong>Shipped to</strong></div>
                             <div>${customerName}</div>
                             <div>${customerAddress}</div>
-                            <div>GSTIN / UIN : ${customerGST}</div>
+                            <div>GSTIN / UIN: ${customerGST}</div>
                         </div>
                     </div>
                     
@@ -666,10 +743,12 @@
                                 <th>HSN/SAC Code</th>
                                 <th>Qty.</th>
                                 <th>Price</th>
+                                ${includeTax ? `
                                 <th>CGST Rate</th>
                                 <th>CGST Amount</th>
                                 <th>SGST Rate</th>
                                 <th>SGST Amount</th>
+                                ` : ''}
                                 <th>Amount (₹)</th>
                             </tr>
                         </thead>
@@ -685,10 +764,11 @@
                                 <span>${totalQuantity.toFixed(2)}</span>
                             </div>
                             <div class="summary-item">
-                                <span>Taxable Amt.</span>
+                                <span>${includeTax ? 'Taxable Amt.' : 'Amount'}</span>
                                 <span>₹ ${totalTaxableAmount.toFixed(2)}</span>
                             </div>
                         </div>
+                        ${includeTax ? `
                         <div>
                             <div class="summary-item">
                                 <span>CGST Amt.</span>
@@ -703,17 +783,21 @@
                                 <span>₹ ${totalTax.toFixed(2)}</span>
                             </div>
                         </div>
+                        ` : ''}
                     </div>
                     
                     <div class="summary-item total-row">
                         <span>Total Amount</span>
                         <span>₹ ${grandTotal.toFixed(2)}</span>
                     </div>
+                    <div class="amount-in-words">
+                        <span><strong>Amount in Words :</strong> ${amountInWords}</span>
+                    </div>
                     
                     <div class="terms-conditions">
                         <p><strong>Declaration</strong></p>
                         <p>BANK NAME - HDFC BANK</p>
-                        <p>A/C NO : 50200104234591 IFSC CODE : HDFC0000251 BRANCH : RING ROAD BRANCH</p>
+                        <p>A/C NO: 50200104234591 IFSC CODE: HDFC0000251 BRANCH: RING ROAD BRANCH</p>
                         
                         <p><strong>Terms & Conditions</strong></p>
                         <p>E.A. O.E.</p>
@@ -741,6 +825,8 @@
             function resetForm() {
                 document.getElementById('invoiceNo').value = '';
                 document.getElementById('invoiceDate').value = today;
+                document.getElementById('placeOfSupply').value = '';
+                document.getElementById('includeTax').value = 'yes';
                 document.getElementById('customerName').value = '';
                 document.getElementById('customerAddress').value = '';
                 document.getElementById('customerGST').value = '';
@@ -766,7 +852,7 @@
                                 <label for="price_0">Price per Unit (₹)</label>
                                 <input type="number" id="price_0" placeholder="e.g., 12000">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group gst-rate-group">
                                 <label for="gstRate_0">GST Rate (%)</label>
                                 <select id="gstRate_0">
                                     <option value="5">5%</option>
@@ -779,17 +865,18 @@
                     </div>
                 `;
                 productCount = 0;
+                toggleGstFields();
 
                 document.getElementById('invoicePreview').innerHTML = `
                     <div class="invoice-header">
                         <div class="invoice-meta">GSTIN: 24BZBPG6012M1ZL</div>
-                        <div class="invoice-title">TAX INVOICE</div>
+                        <div class="invoice-title">INVOICE</div>
                         <div class="invoice-meta">Original Copy</div>
                     </div>
-                    <div style="text-align: center; font-size:1em;">
-                    <div><strong>MAHI ENTERPRISE</strong></div>
-                    <div>62, GOPINATH SOCIETY SEC-3, KATARGAM ROAD, SURAT-395004</div>
-                    <div>Tel.: 7201017618 | email: mahenterprise972@gmail.com</div>
+                    <div style="text-align: center; font-size:1.2em;">
+                        <div style="font-size: 2em;"><strong>MAHI ENTERPRISE</strong></div>
+                        <div>62, GOPINATH SOCIETY SEC-3, KATARGAM ROAD, SURAT-395004</div>
+                        <div>Tel.: 7201017618 | email: mahenterprise972@gmail.com</div>
                     </div>
                 `;
                 document.getElementById('downloadBtn').disabled = true;
