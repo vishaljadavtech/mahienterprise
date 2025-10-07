@@ -1006,54 +1006,57 @@
             function downloadPDF() {
                 const invoicePreview = document.getElementById('invoicePreview');
                 const pdfRender = document.getElementById('pdfRender');
-
-                // Copy the invoice content to the hidden PDF rendering container
+            
+                // Copy content to hidden container
                 pdfRender.innerHTML = invoicePreview.innerHTML;
-
-                // Apply consistent A4-specific styles to pdfRender
-                pdfRender.style.width = '180mm';
+            
+                // Apply A4-specific base styles
+                pdfRender.style.width = '210mm'; // Full A4 width
                 pdfRender.style.padding = '10mm';
                 pdfRender.style.fontSize = '10px';
                 pdfRender.style.lineHeight = '1.4';
                 pdfRender.style.backgroundColor = '#ffffff';
                 pdfRender.style.fontFamily = 'Arial, sans-serif';
-
-                // Apply table-specific styles
+            
+                // Table styling
                 const tables = pdfRender.querySelectorAll('.invoice-table');
                 tables.forEach(table => {
-                    table.style.fontSize = '8px';
-                    table.style.padding = '4px';
+                    table.style.fontSize = '9px';
+                    table.style.padding = '6px';
                     table.style.width = '100%';
                     table.style.borderCollapse = 'collapse';
+                    table.style.tableLayout = 'auto'; // 👈 Allow columns to size based on content
                 });
-
+            
+                // Cell styling — remove forced maxWidth
                 const cells = pdfRender.querySelectorAll('.invoice-table th, .invoice-table td');
                 cells.forEach(cell => {
-                    cell.style.padding = '5px';
-                    cell.style.fontSize = '8px';
-                    cell.style.wordWrap = 'break-word';
-                    cell.style.maxWidth = '35px';
+                    cell.style.padding = '6px';
+                    cell.style.fontSize = '9px';
                     cell.style.border = '1px solid #e2e8f0';
+                    cell.style.whiteSpace = 'nowrap'; // 👈 Prevent text wrapping
+                    cell.style.wordBreak = 'keep-all';
                 });
-
+            
+                // Invoice meta info
                 const metas = pdfRender.querySelectorAll('.invoice-meta');
                 metas.forEach(meta => {
-                    meta.style.fontSize = '9px';
+                    meta.style.fontSize = '10px';
                     meta.style.fontWeight = '600';
                 });
-
-                // Add a slight delay to ensure rendering
+            
+                // Delay to ensure rendering styles applied
                 setTimeout(() => {
                     html2canvas(pdfRender, {
-                        scale: 2, // Consistent scale for all devices
+                        scale: 2,
                         useCORS: true,
                         backgroundColor: '#ffffff',
-                        width: 180 * 3.78, // Convert 180mm to pixels (1mm ≈ 3.78px at 96 DPI)
+                        width: 210 * 3.78, // Full A4 width (210mm → px)
                         height: pdfRender.scrollHeight,
                         logging: false,
                         imageTimeout: 0
                     }).then((canvas) => {
-                        const imgData = canvas.toDataURL('image/jpeg', 0.8);
+                        const imgData = canvas.toDataURL('image/jpeg', 0.9);
                         const { jsPDF } = window.jspdf;
                         const pdf = new jsPDF({
                             orientation: 'portrait',
@@ -1061,31 +1064,25 @@
                             format: 'a4',
                             compress: true
                         });
-
-                        const pdfWidth = 210 - 20; // A4 width (210mm) minus 10mm margins on each side
-                        const pdfHeight = 297 - 20; // A4 height (297mm) minus 10mm margins
-                        const imgWidth = pdfWidth;
-                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-                        // Ensure the image fits within A4 bounds
-                        const scale = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
-                        const scaledWidth = canvas.width * scale;
-                        const scaledHeight = canvas.height * scale;
-
-                        pdf.addImage(imgData, 'JPEG', 10, 10, scaledWidth, scaledHeight);
-
-                        // Save the PDF
-                        pdf.save(`${document.getElementById('customerName').value || 'generated'}.pdf`);
-
-                        // Clear the pdfRender container
+            
+                        // Full-width fit
+                        const pdfWidth = 210;
+                        const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+            
+                        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, imgHeight);
+            
+                        pdf.save(`${document.getElementById('customerName').value || 'invoice'}.pdf`);
+            
+                        // Cleanup
                         pdfRender.innerHTML = '';
                     }).catch((error) => {
                         console.error('Error generating PDF:', error);
                         alert('Error generating PDF. Please try again.');
                         pdfRender.innerHTML = '';
                     });
-                }, 100); // 100ms delay for rendering stability
+                }, 150);
             }
+            
 
             function formatDate(dateString) {
                 const date = new Date(dateString);
