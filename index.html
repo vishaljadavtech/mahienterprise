@@ -637,7 +637,8 @@
                 </div>
 
                 <!-- Hidden PDF rendering container -->
-                <div id="pdfRender" style="position: absolute; left: -9999px; width: 180mm; padding: 10mm; background: white; font-size: 10px; line-height: 1.4; font-family: Arial, sans-serif;">
+                <div id="pdfRender"
+                    style="position: absolute; left: -9999px; width: 180mm; padding: 10mm; background: white; font-size: 10px; line-height: 1.4; font-family: Arial, sans-serif;">
                     <!-- Content will be copied here for PDF generation -->
                 </div>
 
@@ -673,8 +674,8 @@
             toggleGstFields();
 
             function numberToWords(num) {
-                const ones = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 
-                              'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+                const ones = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
+                    'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
                 const tens = ['Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
                 const thousands = ['Thousand', 'Lakh', 'Crore'];
 
@@ -1006,10 +1007,10 @@
             function downloadPDF() {
                 const invoicePreview = document.getElementById('invoicePreview');
                 const pdfRender = document.getElementById('pdfRender');
-            
+
                 // Copy content to hidden container
                 pdfRender.innerHTML = invoicePreview.innerHTML;
-            
+
                 // Apply A4-specific base styles
                 pdfRender.style.width = '210mm'; // Full A4 width
                 pdfRender.style.padding = '10mm';
@@ -1017,7 +1018,7 @@
                 pdfRender.style.lineHeight = '1.4';
                 pdfRender.style.backgroundColor = '#ffffff';
                 pdfRender.style.fontFamily = 'Arial, sans-serif';
-            
+
                 // Table styling
                 const tables = pdfRender.querySelectorAll('.invoice-table');
                 tables.forEach(table => {
@@ -1027,7 +1028,7 @@
                     table.style.borderCollapse = 'collapse';
                     table.style.tableLayout = 'auto'; // 👈 Allow columns to size based on content
                 });
-            
+
                 // Cell styling — remove forced maxWidth
                 const cells = pdfRender.querySelectorAll('.invoice-table th, .invoice-table td');
                 cells.forEach(cell => {
@@ -1037,14 +1038,14 @@
                     cell.style.whiteSpace = 'nowrap'; // 👈 Prevent text wrapping
                     cell.style.wordBreak = 'keep-all';
                 });
-            
+
                 // Invoice meta info
                 const metas = pdfRender.querySelectorAll('.invoice-meta');
                 metas.forEach(meta => {
                     meta.style.fontSize = '10px';
                     meta.style.fontWeight = '600';
                 });
-            
+
                 // Delay to ensure rendering styles applied
                 setTimeout(() => {
                     html2canvas(pdfRender, {
@@ -1064,15 +1065,15 @@
                             format: 'a4',
                             compress: true
                         });
-            
+
                         // Full-width fit
                         const pdfWidth = 210;
                         const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-            
+
                         pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, imgHeight);
-            
+
                         pdf.save(`${document.getElementById('customerName').value || 'invoice'}.pdf`);
-            
+
                         // Cleanup
                         pdfRender.innerHTML = '';
                     }).catch((error) => {
@@ -1082,7 +1083,6 @@
                     });
                 }, 150);
             }
-            
 
             function formatDate(dateString) {
                 const date = new Date(dateString);
