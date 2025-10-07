@@ -220,7 +220,7 @@
         }
 
         .invoice-meta {
-            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            font-size: clamp(1rem, 3vw, 0.9rem);
             color: var(--dark);
         }
 
@@ -632,8 +632,13 @@
                     <div style="text-align: center; font-size:1.2em;">
                         <div style="font-size: 2em;"><strong>MAHI ENTERPRISE</strong></div>
                         <div>62, GOPINATH SOCIETY SEC-3, KATARGAM ROAD, SURAT-395004</div>
-                        <div>Tel.: 7201017618 | email: mahenterprise972@gmail.com</div>
+                        <div>Tel.: 7201047678 | email: mahienterprise9722@gmail.com</div>
                     </div>
+                </div>
+
+                <!-- Hidden PDF rendering container -->
+                <div id="pdfRender" style="position: absolute; left: -9999px; width: 180mm; padding: 10mm; background: white; font-size: 10px; line-height: 1.4; font-family: Arial, sans-serif;">
+                    <!-- Content will be copied here for PDF generation -->
                 </div>
 
                 <div class="btn-group">
@@ -821,7 +826,7 @@
                     <div style="text-align: center; font-size:1.2em;">
                         <div style="font-size: 2em;"><strong>MAHI ENTERPRISE</strong></div>
                         <div>62, GOPINATH SOCIETY SEC-3, KATARGAM ROAD, SURAT-395004</div>
-                        <div>Tel.: 7201017618 | email: mahenterprise972@gmail.com</div>
+                        <div>Tel.: 7201047678 | email: mahienterprise9722@gmail.com</div>
                     </div>
                     
                     <div class="invoice-details">
@@ -991,7 +996,7 @@
                     <div style="text-align: center; font-size:1.2em;">
                         <div style="font-size: 2em;"><strong>MAHI ENTERPRISE</strong></div>
                         <div>62, GOPINATH SOCIETY SEC-3, KATARGAM ROAD, SURAT-395004</div>
-                        <div>Tel.: 7201017618 | email: mahenterprise972@gmail.com</div>
+                        <div>Tel.: 7201047678 | email: mahienterprise9722@gmail.com</div>
                     </div>
                 `;
                 document.getElementById('downloadBtn').disabled = true;
@@ -999,40 +1004,52 @@
             }
 
             function downloadPDF() {
-                const element = document.getElementById('invoicePreview');
-                const originalStyles = element.style.cssText;
+                const invoicePreview = document.getElementById('invoicePreview');
+                const pdfRender = document.getElementById('pdfRender');
 
-                // Apply PDF-specific styles
-                element.style.width = '180mm';
-                element.style.padding = '10mm';
-                element.style.fontSize = '10px';
-                element.style.lineHeight = '1.4';
-                const tables = element.querySelectorAll('.invoice-table');
+                // Copy the invoice content to the hidden PDF rendering container
+                pdfRender.innerHTML = invoicePreview.innerHTML;
+
+                // Apply consistent A4-specific styles to pdfRender
+                pdfRender.style.width = '180mm';
+                pdfRender.style.padding = '10mm';
+                pdfRender.style.fontSize = '10px';
+                pdfRender.style.lineHeight = '1.4';
+                pdfRender.style.backgroundColor = '#ffffff';
+                pdfRender.style.fontFamily = 'Arial, sans-serif';
+
+                // Apply table-specific styles
+                const tables = pdfRender.querySelectorAll('.invoice-table');
                 tables.forEach(table => {
                     table.style.fontSize = '8px';
                     table.style.padding = '4px';
+                    table.style.width = '100%';
+                    table.style.borderCollapse = 'collapse';
                 });
-                const cells = element.querySelectorAll('.invoice-table th, .invoice-table td');
+
+                const cells = pdfRender.querySelectorAll('.invoice-table th, .invoice-table td');
                 cells.forEach(cell => {
                     cell.style.padding = '5px';
                     cell.style.fontSize = '8px';
                     cell.style.wordWrap = 'break-word';
                     cell.style.maxWidth = '35px';
+                    cell.style.border = '1px solid #e2e8f0';
                 });
-                const metas = element.querySelectorAll('.invoice-meta');
+
+                const metas = pdfRender.querySelectorAll('.invoice-meta');
                 metas.forEach(meta => {
                     meta.style.fontSize = '9px';
                     meta.style.fontWeight = '600';
                 });
 
-                // Add a slight delay to ensure rendering on mobile devices
+                // Add a slight delay to ensure rendering
                 setTimeout(() => {
-                    html2canvas(element, {
-                        scale: window.devicePixelRatio > 1 ? 2 : 3, // Adjust scale for mobile high-DPI screens
+                    html2canvas(pdfRender, {
+                        scale: 2, // Consistent scale for all devices
                         useCORS: true,
                         backgroundColor: '#ffffff',
-                        width: element.scrollWidth,
-                        height: element.scrollHeight,
+                        width: 180 * 3.78, // Convert 180mm to pixels (1mm ≈ 3.78px at 96 DPI)
+                        height: pdfRender.scrollHeight,
                         logging: false,
                         imageTimeout: 0
                     }).then((canvas) => {
@@ -1045,39 +1062,27 @@
                             compress: true
                         });
 
-                        const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
-                        const pdfHeight = pdf.internal.pageSize.getHeight() - 20;
+                        const pdfWidth = 210 - 20; // A4 width (210mm) minus 10mm margins on each side
+                        const pdfHeight = 297 - 20; // A4 height (297mm) minus 10mm margins
                         const imgWidth = pdfWidth;
                         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
+                        // Ensure the image fits within A4 bounds
                         const scale = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
                         const scaledWidth = canvas.width * scale;
                         const scaledHeight = canvas.height * scale;
 
                         pdf.addImage(imgData, 'JPEG', 10, 10, scaledWidth, scaledHeight);
 
-                        // Restore original styles
-                        element.style.cssText = originalStyles;
-                        tables.forEach(table => {
-                            table.style.fontSize = '';
-                            table.style.padding = '';
-                        });
-                        cells.forEach(cell => {
-                            cell.style.padding = '';
-                            cell.style.fontSize = '';
-                            cell.style.wordWrap = '';
-                            cell.style.maxWidth = '';
-                        });
-                        metas.forEach(meta => {
-                            meta.style.fontSize = '';
-                            meta.style.fontWeight = '';
-                        });
-
+                        // Save the PDF
                         pdf.save(`${document.getElementById('customerName').value || 'generated'}.pdf`);
+
+                        // Clear the pdfRender container
+                        pdfRender.innerHTML = '';
                     }).catch((error) => {
                         console.error('Error generating PDF:', error);
                         alert('Error generating PDF. Please try again.');
-                        element.style.cssText = originalStyles;
+                        pdfRender.innerHTML = '';
                     });
                 }, 100); // 100ms delay for rendering stability
             }
