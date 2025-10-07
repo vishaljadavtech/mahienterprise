@@ -354,6 +354,31 @@
             flex: 1;
             min-width: 200px;
         }
+
+        .product-entry {
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .remove-product-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .remove-product-btn:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 
@@ -398,42 +423,47 @@
 
                 <h3 class="section-title">Product Information</h3>
 
-                <div class="form-group">
-                    <label for="productDesc">Product Description</label>
-                    <input type="text" id="productDesc" placeholder="e.g., PARTS SPONGE ROLL">
-                </div>
+                <div id="productEntries">
+                    <div class="product-entry">
+                        <button class="remove-product-btn" onclick="this.parentElement.remove()">Remove</button>
+                        <div class="form-group">
+                            <label for="productDesc_0">Product Description</label>
+                            <input type="text" id="productDesc_0" placeholder="e.g., PARTS SPONGE ROLL">
+                        </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="hsnCode">HSN Code</label>
-                        <input type="text" id="hsnCode" placeholder="e.g., 8479">
-                    </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="hsnCode_0">HSN Code</label>
+                                <input type="text" id="hsnCode_0" placeholder="e.g., 8479">
+                            </div>
 
-                    <div class="form-group">
-                        <label for="quantity">Quantity</label>
-                        <input type="number" id="quantity" placeholder="e.g., 2">
-                    </div>
+                            <div class="form-group">
+                                <label for="quantity_0">Quantity</label>
+                                <input type="number" id="quantity_0" placeholder="e.g., 2">
+                            </div>
+                        </div>
 
-                </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="price_0">Price per Unit (₹)</label>
+                                <input type="number" id="price_0" placeholder="e.g., 12000">
+                            </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="price">Price per Unit (₹)</label>
-                        <input type="number" id="price" placeholder="e.g., 12000">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="gstRate">GST Rate (%)</label>
-                        <select id="gstRate">
-                            <option value="5">5%</option>
-                            <option value="12">12%</option>
-                            <option value="18" selected>18%</option>
-                            <option value="28">28%</option>
-                        </select>
+                            <div class="form-group">
+                                <label for="gstRate_0">GST Rate (%)</label>
+                                <select id="gstRate_0">
+                                    <option value="5">5%</option>
+                                    <option value="12">12%</option>
+                                    <option value="18" selected>18%</option>
+                                    <option value="28">28%</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="btn-group">
+                    <button id="addProductBtn" class="btn">Add Product</button>
                     <button id="generateBtn" class="btn">Generate Invoice</button>
                     <button id="resetBtn" class="btn btn-danger">Reset Form</button>
                 </div>
@@ -475,9 +505,51 @@
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('invoiceDate').value = today;
 
+            let productCount = 0;
+
+            document.getElementById('addProductBtn').addEventListener('click', addProduct);
             document.getElementById('generateBtn').addEventListener('click', generateInvoice);
             document.getElementById('resetBtn').addEventListener('click', resetForm);
             document.getElementById('downloadBtn').addEventListener('click', downloadPDF);
+
+            function addProduct() {
+                productCount++;
+                const productEntry = document.createElement('div');
+                productEntry.className = 'product-entry';
+                productEntry.innerHTML = `
+                    <button class="remove-product-btn" onclick="this.parentElement.remove()">Remove</button>
+                    <div class="form-group">
+                        <label for="productDesc_${productCount}">Product Description</label>
+                        <input type="text" id="productDesc_${productCount}" placeholder="e.g., PARTS SPONGE ROLL">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="hsnCode_${productCount}">HSN Code</label>
+                            <input type="text" id="hsnCode_${productCount}" placeholder="e.g., 8479">
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity_${productCount}">Quantity</label>
+                            <input type="number" id="quantity_${productCount}" placeholder="e.g., 2">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="price_${productCount}">Price per Unit (₹)</label>
+                            <input type="number" id="price_${productCount}" placeholder="e.g., 12000">
+                        </div>
+                        <div class="form-group">
+                            <label for="gstRate_${productCount}">GST Rate (%)</label>
+                            <select id="gstRate_${productCount}">
+                                <option value="5">5%</option>
+                                <option value="12">12%</option>
+                                <option value="18" selected>18%</option>
+                                <option value="28">28%</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('productEntries').appendChild(productEntry);
+            }
 
             function generateInvoice() {
                 const invoiceNo = document.getElementById('invoiceNo').value || '2025-26/36';
@@ -485,21 +557,68 @@
                 const customerName = document.getElementById('customerName').value || 'Swastik Digital';
                 const customerAddress = document.getElementById('customerAddress').value || 'Plot No. 285, 1st Floor, New Building Road No.2, G.I.D.C Sachin, Surat.(Guj)';
                 const customerGST = document.getElementById('customerGST').value || '24ADDF5229001ZM';
-                const productDesc = document.getElementById('productDesc').value || 'PARTS SPONGE ROLL';
-                const hsnCode = document.getElementById('hsnCode').value || '8479';
-                const quantity = parseFloat(document.getElementById('quantity').value) || 2;
-                const price = parseFloat(document.getElementById('price').value) || 12000;
-                const gstRate = parseFloat(document.getElementById('gstRate').value) || 18;
 
-                const taxableAmount = quantity * price;
-                const cgstRate = gstRate / 2;
-                const sgstRate = gstRate / 2;
-                const cgstAmount = (taxableAmount * cgstRate) / 100;
-                const sgstAmount = (taxableAmount * sgstRate) / 100;
-                const totalTax = cgstAmount + sgstAmount;
-                const grandTotal = taxableAmount + totalTax;
+                const products = [];
+                const productEntries = document.querySelectorAll('.product-entry');
+                let totalTaxableAmount = 0;
+                let totalCgstAmount = 0;
+                let totalSgstAmount = 0;
+                let totalQuantity = 0;
 
+                productEntries.forEach((entry, index) => {
+                    const productDesc = entry.querySelector(`#productDesc_${index}`).value || 'PARTS SPONGE ROLL';
+                    const hsnCode = entry.querySelector(`#hsnCode_${index}`).value || '8479';
+                    const quantity = parseFloat(entry.querySelector(`#quantity_${index}`).value) || 2;
+                    const price = parseFloat(entry.querySelector(`#price_${index}`).value) || 12000;
+                    const gstRate = parseFloat(entry.querySelector(`#gstRate_${index}`).value) || 18;
+
+                    const taxableAmount = quantity * price;
+                    const cgstRate = gstRate / 2;
+                    const sgstRate = gstRate / 2;
+                    const cgstAmount = (taxableAmount * cgstRate) / 100;
+                    const sgstAmount = (taxableAmount * sgstRate) / 100;
+                    const totalTax = cgstAmount + sgstAmount;
+                    const grandTotal = taxableAmount + totalTax;
+
+                    totalQuantity += quantity;
+                    totalTaxableAmount += taxableAmount;
+                    totalCgstAmount += cgstAmount;
+                    totalSgstAmount += sgstAmount;
+
+                    products.push({
+                        productDesc,
+                        hsnCode,
+                        quantity,
+                        price,
+                        cgstRate,
+                        cgstAmount,
+                        sgstRate,
+                        sgstAmount,
+                        grandTotal
+                    });
+                });
+
+                const totalTax = totalCgstAmount + totalSgstAmount;
+                const grandTotal = totalTaxableAmount + totalTax;
                 const formattedDate = formatDate(invoiceDate);
+
+                let tableRows = '';
+                products.forEach((product, index) => {
+                    tableRows += `
+                        <tr>
+                            <td>${index + 1}.</td>
+                            <td>${product.productDesc}</td>
+                            <td>${product.hsnCode}</td>
+                            <td>${product.quantity.toFixed(2)}</td>
+                            <td>${product.price.toFixed(2)}</td>
+                            <td>${product.cgstRate.toFixed(2)} %</td>
+                            <td>₹ ${product.cgstAmount.toFixed(2)}</td>
+                            <td>${product.sgstRate.toFixed(2)} %</td>
+                            <td>₹ ${product.sgstAmount.toFixed(2)}</td>
+                            <td>₹ ${product.grandTotal.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
 
                 const invoiceHTML = `
                     <div class="invoice-header">
@@ -555,18 +674,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1.</td>
-                                <td>${productDesc}</td>
-                                <td>${hsnCode}</td>
-                                <td>${quantity.toFixed(2)}</td>
-                                <td>${price.toFixed(2)}</td>
-                                <td>${cgstRate.toFixed(2)} %</td>
-                                <td>₹ ${cgstAmount.toFixed(2)}</td>
-                                <td>${sgstRate.toFixed(2)} %</td>
-                                <td>₹ ${sgstAmount.toFixed(2)}</td>
-                                <td>₹ ${grandTotal.toFixed(2)}</td>
-                            </tr>
+                            ${tableRows}
                         </tbody>
                     </table>
                     
@@ -574,25 +682,21 @@
                         <div>
                             <div class="summary-item">
                                 <span>Quantity</span>
-                                <span>${quantity.toFixed(2)}</span>
-                            </div>
-                            <div class="summary-item">
-                                <span>Tax rate</span>
-                                <span>${gstRate}%</span>
+                                <span>${totalQuantity.toFixed(2)}</span>
                             </div>
                             <div class="summary-item">
                                 <span>Taxable Amt.</span>
-                                <span>₹ ${taxableAmount.toFixed(2)}</span>
+                                <span>₹ ${totalTaxableAmount.toFixed(2)}</span>
                             </div>
                         </div>
                         <div>
                             <div class="summary-item">
                                 <span>CGST Amt.</span>
-                                <span>₹ ${cgstAmount.toFixed(2)}</span>
+                                <span>₹ ${totalCgstAmount.toFixed(2)}</span>
                             </div>
                             <div class="summary-item">
                                 <span>SGST Amt.</span>
-                                <span>₹ ${sgstAmount.toFixed(2)}</span>
+                                <span>₹ ${totalSgstAmount.toFixed(2)}</span>
                             </div>
                             <div class="summary-item total-row">
                                 <span>Total Tax</span>
@@ -640,11 +744,41 @@
                 document.getElementById('customerName').value = '';
                 document.getElementById('customerAddress').value = '';
                 document.getElementById('customerGST').value = '';
-                document.getElementById('productDesc').value = '';
-                document.getElementById('hsnCode').value = '';
-                document.getElementById('quantity').value = '';
-                document.getElementById('price').value = '';
-                document.getElementById('gstRate').value = '18';
+                document.getElementById('productEntries').innerHTML = `
+                    <div class="product-entry">
+                        <button class="remove-product-btn" onclick="this.parentElement.remove()">Remove</button>
+                        <div class="form-group">
+                            <label for="productDesc_0">Product Description</label>
+                            <input type="text" id="productDesc_0" placeholder="e.g., PARTS SPONGE ROLL">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="hsnCode_0">HSN Code</label>
+                                <input type="text" id="hsnCode_0" placeholder="e.g., 8479">
+                            </div>
+                            <div class="form-group">
+                                <label for="quantity_0">Quantity</label>
+                                <input type="number" id="quantity_0" placeholder="e.g., 2">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="price_0">Price per Unit (₹)</label>
+                                <input type="number" id="price_0" placeholder="e.g., 12000">
+                            </div>
+                            <div class="form-group">
+                                <label for="gstRate_0">GST Rate (%)</label>
+                                <select id="gstRate_0">
+                                    <option value="5">5%</option>
+                                    <option value="12">12%</option>
+                                    <option value="18" selected>18%</option>
+                                    <option value="28">28%</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                productCount = 0;
 
                 document.getElementById('invoicePreview').innerHTML = `
                     <div class="invoice-header">
