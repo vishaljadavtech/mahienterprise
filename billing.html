@@ -629,7 +629,7 @@
                 <div class="invoice-preview" id="invoicePreview">
                     <div class="invoice-header">
                         <div class="invoice-meta">GSTIN: 24BZBPG6012M1ZL</div>
-                        <div class="invoice-title">${invoiceTitle}</div>
+                        <div class="invoice-title">INVOICE</div>
                         <div class="invoice-meta">Original Copy</div>
                     </div>
                     <div style="text-align: center; font-size:1.2em;">
@@ -778,12 +778,11 @@
                 let totalQuantity = 0;
 
                 productEntries.forEach((entry, index) => {
-                    const productDesc = entry.querySelector('input[id^="productDesc"]').value || 'PARTS SPONGE ROLL';
-                    const hsnCode = entry.querySelector('input[id^="hsnCode"]').value || '8479';
-                    const quantity = parseFloat(entry.querySelector('input[id^="quantity"]').value) || 2;
-                    const price = parseFloat(entry.querySelector('input[id^="price"]').value) || 12000;
-                    const gstRate = includeTax ? parseFloat(entry.querySelector('select[id^="gstRate"]').value) || 18 : 0;
-                    
+                    const productDesc = entry.querySelector(`#productDesc_${index}`).value || 'PARTS SPONGE ROLL';
+                    const hsnCode = entry.querySelector(`#hsnCode_${index}`).value || '8479';
+                    const quantity = parseFloat(entry.querySelector(`#quantity_${index}`).value) || 2;
+                    const price = parseFloat(entry.querySelector(`#price_${index}`).value) || 12000;
+                    const gstRate = includeTax ? parseFloat(entry.querySelector(`#gstRate_${index}`).value) || 18 : 0;
 
                     const taxableAmount = quantity * price;
                     const cgstRate = includeTax ? gstRate / 2 : 0;
@@ -1021,7 +1020,6 @@
                 `;
                 document.getElementById('downloadBtn').disabled = true;
                 document.getElementById('successAlert').classList.add('hidden');
-                
             }
 
             function downloadPDF() {
@@ -1103,7 +1101,6 @@
                     });
                 }, 150);
             }
-        
 
             function formatDate(dateString) {
                 const date = new Date(dateString);
