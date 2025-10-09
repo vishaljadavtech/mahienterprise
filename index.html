@@ -4,18 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAHI ENTERPRISE | Invoice Generator</title>
-    <script src="jspdf.min.js"></script>
-    <script src="html2canvas.min.js"></script>
+    <title>MAHI ENTERPRISE | Login</title>
     <style>
         :root {
             --primary: #1a3c5e;
             --secondary: #007bff;
-            --accent: #ff4d4d;
             --light: #f8fafc;
             --dark: #1f2a44;
             --success: #28a745;
-            --warning: #ffc107;
             --danger: #dc3545;
             --border-radius: 8px;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -35,63 +31,25 @@
             line-height: 1.6;
             padding: 15px;
             min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            padding: 15px;
-            margin-bottom: 15px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
         }
 
-       
-        h1 {
-            font-size: clamp(1.8rem, 6vw, 2.2rem);
-            font-weight: 700;
-            position: relative;
-        }
-
-        .app-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        .input-section,
-        .preview-section {
+        .login-container {
+            max-width: 400px;
+            width: 100%;
             background: white;
             padding: 20px;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .input-section:hover,
-        .preview-section:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .section-title {
-            font-size: clamp(1.4rem, 5vw, 1.6rem);
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 3px solid var(--secondary);
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
             color: var(--primary);
-            font-weight: 600;
+            font-size: clamp(1.5rem, 5vw, 1.8rem);
         }
 
         .form-group {
@@ -106,9 +64,7 @@
             font-size: clamp(0.85rem, 3.5vw, 0.9rem);
         }
 
-        input,
-        select,
-        textarea {
+        input {
             width: 100%;
             padding: 10px;
             border: 1px solid #e2e8f0;
@@ -118,18 +74,11 @@
             background: #f9fafb;
         }
 
-        input:focus,
-        select:focus,
-        textarea:focus {
+        input:focus {
             outline: none;
             border-color: var(--secondary);
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
             background: white;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 70px;
         }
 
         .btn {
@@ -153,165 +102,6 @@
             box-shadow: var(--shadow);
         }
 
-        .btn-success {
-            background-color: var(--success);
-        }
-
-        .btn-success:hover {
-            background-color: #218838;
-        }
-
-        .btn-danger {
-            background-color: var(--danger);
-        }
-
-        .btn-danger:hover {
-            background-color: #c82333;
-        }
-
-        .btn-logout {
-            background-color: var(--danger);
-            padding: 8px 16px;
-            font-size: clamp(0.8rem, 3vw, 0.9rem);
-            width: auto;
-        }
-
-        .btn-logout:hover {
-            background-color: #c82333;
-        }
-
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .invoice-preview {
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 15px;
-            background: white;
-            font-size: clamp(0.8rem, 3vw, 0.85rem);
-            overflow-x: auto;
-        }
-
-        .invoice-header {
-            position: relative;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--primary);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: wrap;
-        }
-
-        .invoice-title {
-            font-size: clamp(1rem, 4vw, 1.1rem);
-            font-weight: 700;
-            margin-top: 15px;
-            color: var(--primary);
-            text-align: center;
-            flex: 1;
-        }
-
-        .invoice-meta {
-            font-size: clamp(1rem, 3vw, 0.9rem);
-            color: var(--dark);
-        }
-
-        .company-info-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .company-info {
-            font-size: clamp(0.75rem, 3vw, 0.8rem);
-        }
-
-        .invoice-details {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-            font-size: clamp(0.75rem, 3vw, 0.8rem);
-        }
-
-        .invoice-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-        }
-
-        .invoice-table th,
-        .invoice-table td {
-            border: 1px solid #e2e8f0;
-            padding: 6px;
-            text-align: left;
-            font-size: clamp(0.7rem, 2.5vw, 0.75rem);
-            word-wrap: break-word;
-        }
-
-        .invoice-table th {
-            background-color: #f1f5f9;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .invoice-summary {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-            font-size: clamp(0.75rem, 3vw, 0.8rem);
-        }
-
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px dashed #e2e8f0;
-        }
-
-        .total-row {
-            font-weight: 700;
-            font-size: clamp(0.9rem, 3.5vw, 0.95rem);
-            border-bottom: 2px solid var(--primary);
-        }
-
-        .terms-conditions {
-            margin-top: 15px;
-            font-size: clamp(0.65rem, 2.5vw, 0.7rem);
-            background: #f8fafc;
-            padding: 10px;
-            border-radius: 6px;
-        }
-
-        .signature-area {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-            font-size: clamp(0.7rem, 2.5vw, 0.75rem);
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .signature-box {
-            width: clamp(120px, 40vw, 140px);
-            border-top: 1px solid var(--dark);
-            padding-top: 6px;
-            text-align: center;
-        }
-
-        .amount-in-words {
-            margin-top: 8px;
-            font-size: clamp(0.75rem, 3vw, 0.8rem);
-            font-style: italic;
-        }
-
         .alert {
             padding: 10px;
             margin-bottom: 15px;
@@ -322,112 +112,33 @@
             gap: 8px;
         }
 
-        .alert-success {
-            background-color: rgba(40, 167, 69, 0.1);
-            color: var(--success);
-            border: 1px solid var(--success);
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
         }
 
         .hidden {
             display: none;
         }
 
-        .form-row {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .product-entry {
-            border: 1px solid #e2e8f0;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 10px;
+        .password-container {
             position: relative;
         }
 
-        .remove-product-btn {
+        .password-toggle {
             position: absolute;
-            top: 5px;
-            right: 5px;
-            background-color: var(--danger);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 5px 8px;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
             cursor: pointer;
-            font-size: clamp(0.8rem, 3vw, 0.85rem);
-        }
-
-        .remove-product-btn:hover {
-            background-color: #c82333;
-        }
-
-        .gst-rate-group {
+            color: var(--dark);
+            opacity: 0.6;
             transition: opacity 0.3s ease;
         }
 
-        .gst-rate-group.hidden {
-            display: none;
-        }
-
-        @media (min-width: 768px) {
-            body {
-                padding: 20px;
-            }
-
-            .app-container {
-                grid-template-columns: 1fr 1fr;
-                gap: 25px;
-            }
-
-            .input-section,
-            .preview-section {
-                padding: 25px;
-            }
-
-            .btn-group {
-                flex-direction: row;
-                gap: 15px;
-            }
-
-            .btn {
-                width: auto;
-            }
-
-            .invoice-details,
-            .invoice-summary,
-            .company-info-container {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .invoice-table th,
-            .invoice-table td {
-                padding: 8px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            body {
-                padding: 30px;
-            }
-
-            .app-container {
-                gap: 30px;
-            }
-
-            .input-section,
-            .preview-section {
-                padding: 30px;
-            }
-
-            h1 {
-                font-size: 2.8rem;
-            }
-
-            .section-title {
-                font-size: 1.8rem;
-            }
+        .password-toggle:hover {
+            opacity: 1;
         }
 
         @media (max-width: 480px) {
@@ -435,687 +146,88 @@
                 padding: 10px;
             }
 
-            .container {
-                max-width: 100%;
+            .login-container {
+                padding: 15px;
             }
 
-            header {
-                padding: 10px;
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            h1 {
-                font-size: clamp(1.5rem, 5vw, 1.8rem);
-            }
-
-            .section-title {
+            h2 {
                 font-size: clamp(1.2rem, 4.5vw, 1.4rem);
-            }
-
-            .form-group {
-                min-width: 100%;
-            }
-
-            .form-row {
-                flex-direction: column;
-                gap: 10px;
             }
 
             .btn {
                 padding: 8px 15px;
                 font-size: clamp(0.85rem, 3.5vw, 0.9rem);
             }
-
-            .btn-logout {
-                width: 100%;
-            }
-
-            .invoice-preview {
-                padding: 10px;
-                font-size: clamp(0.7rem, 2.5vw, 0.75rem);
-            }
-
-            .invoice-table th,
-            .invoice-table td {
-                padding: 5px;
-                font-size: clamp(0.65rem, 2vw, 0.7rem);
-            }
-        }
-
-        @media print {
-            .invoice-preview {
-                width: 180mm !important;
-                padding: 10mm !important;
-                font-size: 10px !important;
-                line-height: 1.4 !important;
-            }
-
-            .invoice-table {
-                font-size: 8px !important;
-                padding: 4px !important;
-            }
-
-            .invoice-table th,
-            .invoice-table td {
-                padding: 5px !important;
-                font-size: 8px !important;
-                word-wrap: break-word !important;
-                max-width: 35px !important;
-            }
-
-            .invoice-meta {
-                font-size: 9px !important;
-                font-weight: 600 !important;
-            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>MAHI ENTERPRISE</h1>
-            <button id="logoutBtn" class="btn btn-logout">Logout</button>
-        </header>
-
-        <div class="app-container">
-            <section class="input-section">
-                <h2 class="section-title">Invoice Details</h2>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="invoiceNo">Invoice Number</label>
-                        <input type="text" id="invoiceNo" placeholder="e.g., 2025-26/36">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="invoiceDate">Invoice Date</label>
-                        <input type="date" id="invoiceDate">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="placeOfSupply">Place of Supply</label>
-                        <input type="text" id="placeOfSupply" placeholder="e.g., Gujarat (24)">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="includeTax">Include Tax</label>
-                        <select id="includeTax">
-                            <option value="yes">Yes (Tax Invoice)</option>
-                            <option value="no">No (Regular Invoice)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <h3 class="section-title">Customer Information</h3>
-
-                <div class="form-group">
-                    <label for="customerName">Customer Name</label>
-                    <input type="text" id="customerName" placeholder="e.g., Swastik Digital">
-                </div>
-
-                <div class="form-group">
-                    <label for="customerAddress">Customer Address</label>
-                    <textarea id="customerAddress" rows="3" placeholder="Full address of the customer"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="customerGST">Customer GSTIN</label>
-                    <input type="text" id="customerGST" placeholder="e.g., 24ADDF5229001ZM">
-                </div>
-
-                <h3 class="section-title">Product Information</h3>
-
-                <div id="productEntries">
-                    <div class="product-entry">
-                        <button class="remove-product-btn" onclick="this.parentElement.remove()">Remove</button>
-                        <div class="form-group">
-                            <label for="productDesc_0">Product Description</label>
-                            <input type="text" id="productDesc_0" placeholder="e.g., PARTS SPONGE ROLL">
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="hsnCode_0">HSN/SAC Code</label>
-                                <input type="text" id="hsnCode_0" placeholder="e.g., 8479">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="quantity_0">Quantity</label>
-                                <input type="number" id="quantity_0" placeholder="e.g., 2">
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="price_0">Price per Unit (₹)</label>
-                                <input type="number" id="price_0" placeholder="e.g., 12000">
-                            </div>
-
-                            <div class="form-group gst-rate-group">
-                                <label for="gstRate_0">GST Rate (%)</label>
-                                <select id="gstRate_0">
-                                    <option value="5">5%</option>
-                                    <option value="12">12%</option>
-                                    <option value="18" selected>18%</option>
-                                    <option value="28">28%</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="btn-group">
-                    <button id="addProductBtn" class="btn">Add More</button>
-                    <button id="generateBtn" class="btn">Generate Invoice</button>
-                    <button id="resetBtn" class="btn btn-danger">Reset Form</button>
-                </div>
-
-                <div id="successAlert" class="alert alert-success hidden">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                    </svg>
-                    Invoice generated successfully! You can now download it as PDF.
-                </div>
-            </section>
-
-            <section class="preview-section">
-                <h2 class="section-title">Invoice Preview</h2>
-
-                <div class="invoice-preview" id="invoicePreview">
-                    <div class="invoice-header">
-                        <div class="invoice-meta">GSTIN: 24BZBPG6012M1ZL</div>
-                        <div id="invoice-title" class="invoice-title">INVOICE</div>
-                        <div class="invoice-meta">Original Copy</div>
-                    </div>
-                    <div style="text-align: center; font-size:1.2em;">
-                        <div style="font-size: 2em;"><strong>MAHI ENTERPRISE</strong></div>
-                        <div>62, GOPINATH SOCIETY SEC-3, KATARGAM ROAD, SURAT-395004</div>
-                        <div>Tel.: 7201047678 | email: mahienterprise9722@gmail.com</div>
-                    </div>
-                </div>
-
-                <!-- Hidden PDF rendering container -->
-                <div id="pdfRender"
-                    style="position: absolute; left: -9999px; width: 180mm; padding: 10mm; background: white; font-size: 10px; line-height: 1.4; font-family: Arial, sans-serif;">
-                    <!-- Content will be copied here for PDF generation -->
-                </div>
-
-                <div class="btn-group">
-                    <button id="downloadBtn" class="btn btn-success" disabled>Download PDF</button>
-                </div>
-            </section>
+    <div class="login-container">
+        <h2>Login</h2>
+        <div id="loginError" class="alert alert-danger hidden">
+            Invalid username or password. Please try again.
+        </div>
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter username">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <div class="password-container">
+                <input type="password" id="password" placeholder="Enter password">
+                <svg id="passwordToggle" class="password-toggle" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button id="loginBtn" class="btn">Login</button>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Check if user is logged in
+            // Check if user is already logged in
             const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-            if (!isLoggedIn) {
-                window.location.href = 'index.html';
+            if (isLoggedIn) {
+                window.location.href = 'billing.html';
             }
 
-            // Logout handling
-            document.getElementById('logoutBtn').addEventListener('click', function () {
-                // Clear localStorage
-                localStorage.removeItem('username');
-                localStorage.removeItem('isLoggedIn');
-                // Redirect to login page
-                window.location.href = 'index.html';
+            // Login handling
+            document.getElementById('loginBtn').addEventListener('click', function () {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const loginError = document.getElementById('loginError');
+
+                // Hardcoded credentials for demo purposes (replace with secure auth in production)
+                const validUsername = 'MEADMIN';
+                const validPassword = 'Mahii@9966';
+
+                if (username === validUsername && password === validPassword) {
+                    // Save credentials to localStorage (simulating .env)
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('isLoggedIn', 'true');
+                    loginError.classList.add('hidden');
+                    window.location.href = 'billing.html';
+                } else {
+                    loginError.classList.remove('hidden');
+                }
             });
 
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('invoiceDate').value = today;
+            // Show/hide password toggle
+            const passwordInput = document.getElementById('password');
+            const passwordToggle = document.getElementById('passwordToggle');
+            let isPasswordVisible = false;
 
-            let productCount = 0;
-
-            document.getElementById('addProductBtn').addEventListener('click', addProduct);
-            document.getElementById('generateBtn').addEventListener('click', generateInvoice);
-            document.getElementById('resetBtn').addEventListener('click', resetForm);
-            document.getElementById('downloadBtn').addEventListener('click', downloadPDF);
-            document.getElementById('includeTax').addEventListener('change', toggleGstFields);
-
-            function toggleGstFields() {
-                const includeTax = document.getElementById('includeTax').value === 'yes';
-                const gstFields = document.querySelectorAll('.gst-rate-group');
-                gstFields.forEach(field => {
-                    field.classList.toggle('hidden', !includeTax);
-                });
-            }
-
-            // Initialize GST fields visibility on page load
-            toggleGstFields();
-
-            function numberToWords(num) {
-                const ones = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
-                    'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
-                const tens = ['Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-                const thousands = ['Thousand', 'Lakh', 'Crore'];
-
-                if (num === 0) return 'Zero';
-
-                function convertBelowThousand(n) {
-                    if (n < 20) return ones[n];
-                    if (n < 100) return tens[Math.floor(n / 10) - 2] + (n % 10 ? ' ' + ones[n % 10] : '');
-                    return ones[Math.floor(n / 100)] + ' Hundred' + (n % 100 ? ' and ' + convertBelowThousand(n % 100) : '');
-                }
-
-                let result = '';
-                let crore = Math.floor(num / 10000000);
-                num %= 10000000;
-                let lakh = Math.floor(num / 100000);
-                num %= 100000;
-                let thousand = Math.floor(num / 1000);
-                num %= 1000;
-
-                if (crore) result += convertBelowThousand(crore) + ' ' + thousands[2] + ' ';
-                if (lakh) result += convertBelowThousand(lakh) + ' ' + thousands[1] + ' ';
-                if (thousand) result += convertBelowThousand(thousand) + ' ' + thousands[0] + ' ';
-                if (num) result += convertBelowThousand(num);
-
-                return result.trim() + ' Only';
-            }
-
-            function addProduct() {
-                productCount++;
-                const includeTax = document.getElementById('includeTax').value === 'yes';
-                const productEntry = document.createElement('div');
-                productEntry.className = 'product-entry';
-                productEntry.innerHTML = `
-                    <button class="remove-product-btn" onclick="this.parentElement.remove()">Remove</button>
-                    <div class="form-group">
-                        <label for="productDesc_${productCount}">Product Description</label>
-                        <input type="text" id="productDesc_${productCount}" placeholder="e.g., PARTS SPONGE ROLL">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="hsnCode_${productCount}">HSN/SAC Code</label>
-                            <input type="text" id="hsnCode_${productCount}" placeholder="e.g., 8479">
-                        </div>
-                        <div class="form-group">
-                            <label for="quantity_${productCount}">Quantity</label>
-                            <input type="number" id="quantity_${productCount}" placeholder="e.g., 2">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="price_${productCount}">Price per Unit (₹)</label>
-                            <input type="number" id="price_${productCount}" placeholder="e.g., 12000">
-                        </div>
-                        <div class="form-group gst-rate-group ${includeTax ? '' : 'hidden'}">
-                            <label for="gstRate_${productCount}">GST Rate (%)</label>
-                            <select id="gstRate_${productCount}">
-                                <option value="5">5%</option>
-                                <option value="12">12%</option>
-                                <option value="18" selected>18%</option>
-                                <option value="28">28%</option>
-                            </select>
-                        </div>
-                    </div>
-                `;
-                document.getElementById('productEntries').appendChild(productEntry);
-            }
-
-            function generateInvoice() {
-                const invoiceNo = document.getElementById('invoiceNo').value || '2025-26/36';
-                const invoiceDate = document.getElementById('invoiceDate').value;
-                const placeOfSupply = document.getElementById('placeOfSupply').value || 'Gujarat (24)';
-                const includeTax = document.getElementById('includeTax').value === 'yes';
-                const customerName = document.getElementById('customerName').value || 'Swastik Digital';
-                const customerAddress = document.getElementById('customerAddress').value || 'Plot No. 285, 1st Floor, New Building Road No.2, G.I.D.C Sachin, Surat.(Guj)';
-                const customerGST = document.getElementById('customerGST').value || '24ADDF5229001ZM';
-
-                const products = [];
-                const productEntries = document.querySelectorAll('.product-entry');
-                let totalTaxableAmount = 0;
-                let totalCgstAmount = 0;
-                let totalSgstAmount = 0;
-                let totalQuantity = 0;
-
-                productEntries.forEach((entry, index) => {
-                    const productDesc = entry.querySelector(`#productDesc_${index}`).value || 'PARTS SPONGE ROLL';
-                    const hsnCode = entry.querySelector(`#hsnCode_${index}`).value || '8479';
-                    const quantity = parseFloat(entry.querySelector(`#quantity_${index}`).value) || 2;
-                    const price = parseFloat(entry.querySelector(`#price_${index}`).value) || 12000;
-                    const gstRate = includeTax ? parseFloat(entry.querySelector(`#gstRate_${index}`).value) || 18 : 0;
-
-                    const taxableAmount = quantity * price;
-                    const cgstRate = includeTax ? gstRate / 2 : 0;
-                    const sgstRate = includeTax ? gstRate / 2 : 0;
-                    const cgstAmount = includeTax ? (taxableAmount * cgstRate) / 100 : 0;
-                    const sgstAmount = includeTax ? (taxableAmount * sgstRate) / 100 : 0;
-                    const totalTax = cgstAmount + sgstAmount;
-                    const grandTotal = taxableAmount + totalTax;
-
-                    totalQuantity += quantity;
-                    totalTaxableAmount += taxableAmount;
-                    totalCgstAmount += cgstAmount;
-                    totalSgstAmount += sgstAmount;
-
-                    products.push({
-                        productDesc,
-                        hsnCode,
-                        quantity,
-                        price,
-                        cgstRate,
-                        cgstAmount,
-                        sgstRate,
-                        sgstAmount,
-                        grandTotal
-                    });
-                });
-
-                const totalTax = totalCgstAmount + totalSgstAmount;
-                const grandTotal = totalTaxableAmount + totalTax;
-                const amountInWords = numberToWords(Math.round(grandTotal));
-                const formattedDate = formatDate(invoiceDate);
-                const invoiceTitle = includeTax ? 'TAX INVOICE' : 'INVOICE';
-
-                const invoiceTitleElem = document.getElementById('invoice-title');
-                invoiceTitleElem.textContent = includeTax ? 'TAX INVOICE' : 'INVOICE';
-                
-                
-
-                let tableRows = '';
-                products.forEach((product, index) => {
-                    tableRows += `
-                        <tr>
-                            <td>${index + 1}.</td>
-                            <td>${product.productDesc}</td>
-                            <td>${product.hsnCode}</td>
-                            <td>${product.quantity.toFixed(2)}</td>
-                            <td>${product.price.toFixed(2)}</td>
-                            ${includeTax ? `
-                            <td>${product.cgstRate.toFixed(2)} %</td>
-                            <td>₹ ${product.cgstAmount.toFixed(2)}</td>
-                            <td>${product.sgstRate.toFixed(2)} %</td>
-                            <td>₹ ${product.sgstAmount.toFixed(2)}</td>
-                            ` : ''}
-                            <td>₹ ${product.grandTotal.toFixed(2)}</td>
-                        </tr>
-                    `;
-                });
-
-                const invoiceHTML = `
-                    <div class="invoice-header">
-                        <div class="invoice-meta">GSTIN: 24BZBPG6012M1ZL</div>
-                        <div class="invoice-title">${invoiceTitle}</div>
-                        <div class="invoice-meta">Original Copy</div>
-                    </div>
-                    <div style="text-align: center; font-size:1.2em;">
-                        <div style="font-size: 2em;"><strong>MAHI ENTERPRISE</strong></div>
-                        <div>62, GOPINATH SOCIETY SEC-3, KATARGAM ROAD, SURAT-395004</div>
-                        <div>Tel.: 7201047678 | email: mahienterprise9722@gmail.com</div>
-                    </div>
-                    
-                    <div class="invoice-details">
-                        <div>
-                            <div><strong>Invoice No.</strong> : ${invoiceNo}</div>
-                            <div><strong>Date of Invoice</strong> : ${formattedDate}</div>
-                        </div>
-                        <div>
-                            <div><strong>Place of Supply</strong> : ${placeOfSupply}</div>
-                            <div><strong>Reverse Charge</strong> : N</div>
-                        </div>
-                    </div>
-                    
-                    <div class="company-info-container">
-                        <div class="company-info">
-                            <div><strong>Billed to</strong></div>
-                            <div>${customerName}</div>
-                            <div>${customerAddress}</div>
-                            <div>GSTIN / UIN: ${customerGST}</div>
-                        </div>
-                        <div class="company-info">
-                            <div><strong>Shipped to</strong></div>
-                            <div>${customerName}</div>
-                            <div>${customerAddress}</div>
-                            <div>GSTIN / UIN: ${customerGST}</div>
-                        </div>
-                    </div>
-                    
-                    <table class="invoice-table">
-                        <thead>
-                            <tr>
-                                <th>S.N.</th>
-                                <th>Description of Goods</th>
-                                <th>HSN/SAC Code</th>
-                                <th>Qty.</th>
-                                <th>Price</th>
-                                ${includeTax ? `
-                                <th>CGST Rate</th>
-                                <th>CGST Amount</th>
-                                <th>SGST Rate</th>
-                                <th>SGST Amount</th>
-                                ` : ''}
-                                <th>Amount (₹)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${tableRows}
-                        </tbody>
-                    </table>
-                    
-                    <div class="invoice-summary">
-                        <div>
-                            <div class="summary-item">
-                                <span>Quantity</span>
-                                <span>${totalQuantity.toFixed(2)}</span>
-                            </div>
-                            <div class="summary-item">
-                                <span>${includeTax ? 'Taxable Amt.' : 'Amount'}</span>
-                                <span>₹ ${totalTaxableAmount.toFixed(2)}</span>
-                            </div>
-                        </div>
-                        ${includeTax ? `
-                        <div>
-                            <div class="summary-item">
-                                <span>CGST Amt.</span>
-                                <span>₹ ${totalCgstAmount.toFixed(2)}</span>
-                            </div>
-                            <div class="summary-item">
-                                <span>SGST Amt.</span>
-                                <span>₹ ${totalSgstAmount.toFixed(2)}</span>
-                            </div>
-                            <div class="summary-item total-row">
-                                <span>Total Tax</span>
-                                <span>₹ ${totalTax.toFixed(2)}</span>
-                            </div>
-                        </div>
-                        ` : ''}
-                    </div>
-                    
-                    <div class="summary-item total-row">
-                        <span>Total Amount</span>
-                        <span>₹ ${grandTotal.toFixed(2)}</span>
-                    </div>
-                    <div class="amount-in-words">
-                        <span><strong>Amount in Words :</strong> ${amountInWords}</span>
-                    </div>
-                    
-                    <div class="terms-conditions">
-                        <p><strong>Declaration</strong></p>
-                        <p>BANK NAME - HDFC BANK</p>
-                        <p>A/C NO: 50200104234591 IFSC CODE: HDFC0000251 BRANCH: RING ROAD BRANCH</p>
-                        
-                        <p><strong>Terms & Conditions</strong></p>
-                        <p>E.& O.E.</p>
-                        <p>1. Goods once sold will not be taken back.</p>
-                        <p>2. Interest @ 18% p.a. will be charged if the payment is not made with in the stipulated time.</p>
-                        <p>3. Subject to 'SURAT' Jurisdiction only.</p>
-                    </div>
-                    
-                    <div class="signature-area">
-                        <div class="signature-box">
-                            Receiver's Signature
-                        </div>
-                        <div class="signature-box">
-                            For MAHI ENTERPRISE<br>Authorised Signatory
-                        </div>
-                    </div>
-                `;
-
-                document.getElementById('invoicePreview').innerHTML = invoiceHTML;
-                document.getElementById('downloadBtn').disabled = false;
-                document.getElementById('successAlert').classList.remove('hidden');
-                document.querySelector('.preview-section').scrollIntoView({ behavior: 'smooth' });
-            }
-
-            function resetForm() {
-                document.getElementById('invoiceNo').value = '';
-                document.getElementById('invoiceDate').value = today;
-                document.getElementById('placeOfSupply').value = '';
-                document.getElementById('includeTax').value = 'yes';
-                document.getElementById('customerName').value = '';
-                document.getElementById('customerAddress').value = '';
-                document.getElementById('customerGST').value = '';
-                document.getElementById('productEntries').innerHTML = `
-                    <div class="product-entry">
-                        <button class="remove-product-btn" onclick="this.parentElement.remove()">Remove</button>
-                        <div class="form-group">
-                            <label for="productDesc_0">Product Description</label>
-                            <input type="text" id="productDesc_0" placeholder="e.g., PARTS SPONGE ROLL">
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="hsnCode_0">HSN/SAC Code</label>
-                                <input type="text" id="hsnCode_0" placeholder="e.g., 8479">
-                            </div>
-                            <div class="form-group">
-                                <label for="quantity_0">Quantity</label>
-                                <input type="number" id="quantity_0" placeholder="e.g., 2">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="price_0">Price per Unit (₹)</label>
-                                <input type="number" id="price_0" placeholder="e.g., 12000">
-                            </div>
-                            <div class="form-group gst-rate-group">
-                                <label for="gstRate_0">GST Rate (%)</label>
-                                <select id="gstRate_0">
-                                    <option value="5">5%</option>
-                                    <option value="12">12%</option>
-                                    <option value="18" selected>18%</option>
-                                    <option value="28">28%</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                productCount = 0;
-                toggleGstFields();
-
-                document.getElementById('invoicePreview').innerHTML = `
-                    <div class="invoice-header">
-                        <div class="invoice-meta">GSTIN: 24BZBPG6012M1ZL</div>
-                        <div class="invoice-title">INVOICE</div>
-                        <div class="invoice-meta">Original Copy</div>
-                    </div>
-                    <div style="text-align: center; font-size:1.2em;">
-                        <div style="font-size: 2em;"><strong>MAHI ENTERPRISE</strong></div>
-                        <div>62, GOPINATH SOCIETY SEC-3, KATARGAM ROAD, SURAT-395004</div>
-                        <div>Tel.: 7201047678 | email: mahienterprise9722@gmail.com</div>
-                    </div>
-                `;
-                document.getElementById('downloadBtn').disabled = true;
-                document.getElementById('successAlert').classList.add('hidden');
-                
-            }
-
-            function downloadPDF() {
-                const invoicePreview = document.getElementById('invoicePreview');
-                const pdfRender = document.getElementById('pdfRender');
-
-                // Copy content to hidden container
-                pdfRender.innerHTML = invoicePreview.innerHTML;
-
-                // Apply A4-specific base styles
-                pdfRender.style.width = '210mm'; // Full A4 width
-                pdfRender.style.padding = '10mm';
-                pdfRender.style.fontSize = '10px';
-                pdfRender.style.lineHeight = '1.4';
-                pdfRender.style.backgroundColor = '#ffffff';
-                pdfRender.style.fontFamily = 'Arial, sans-serif';
-
-                // Table styling
-                const tables = pdfRender.querySelectorAll('.invoice-table');
-                tables.forEach(table => {
-                    table.style.fontSize = '9px';
-                    table.style.padding = '6px';
-                    table.style.width = '100%';
-                    table.style.borderCollapse = 'collapse';
-                    table.style.tableLayout = 'auto';
-                });
-
-                // Cell styling
-                const cells = pdfRender.querySelectorAll('.invoice-table th, .invoice-table td');
-                cells.forEach(cell => {
-                    cell.style.padding = '6px';
-                    cell.style.fontSize = '9px';
-                    cell.style.border = '1px solid #e2e8f0';
-                    cell.style.whiteSpace = 'nowrap';
-                    cell.style.wordBreak = 'keep-all';
-                });
-
-                // Invoice meta info
-                const metas = pdfRender.querySelectorAll('.invoice-meta');
-                metas.forEach(meta => {
-                    meta.style.fontSize = '10px';
-                    meta.style.fontWeight = '600';
-                });
-
-                // Delay to ensure rendering styles applied
-                setTimeout(() => {
-                    html2canvas(pdfRender, {
-                        scale: 2,
-                        useCORS: true,
-                        backgroundColor: '#ffffff',
-                        width: 210 * 3.78, // Full A4 width (210mm → px)
-                        height: pdfRender.scrollHeight,
-                        logging: false,
-                        imageTimeout: 0
-                    }).then((canvas) => {
-                        const imgData = canvas.toDataURL('image/jpeg', 0.9);
-                        const { jsPDF } = window.jspdf;
-                        const pdf = new jsPDF({
-                            orientation: 'portrait',
-                            unit: 'mm',
-                            format: 'a4',
-                            compress: true
-                        });
-
-                        // Full-width fit
-                        const pdfWidth = 210;
-                        const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-
-                        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, imgHeight);
-
-                        pdf.save(`${document.getElementById('customerName').value || 'invoice'}.pdf`);
-
-                        // Cleanup
-                        pdfRender.innerHTML = '';
-                    }).catch((error) => {
-                        console.error('Error generating PDF:', error);
-                        alert('Error generating PDF. Please try again.');
-                        pdfRender.innerHTML = '';
-                    });
-                }, 150);
-            }
-        
-
-            function formatDate(dateString) {
-                const date = new Date(dateString);
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const year = date.getFullYear();
-                return `${day}-${month}-${year}`;
-            }
+            passwordToggle.addEventListener('click', function () {
+                isPasswordVisible = !isPasswordVisible;
+                passwordInput.type = isPasswordVisible ? 'text' : 'password';
+                passwordToggle.innerHTML = isPasswordVisible
+                    ? '<path d="M2 2l20 20"/><path d="M6.5 6.5A12 12 0 0 0 1 12s4 8 11 8c2.5 0 4.8-.8 6.5-2.1"/><path d="M12 9a3 3 0 0 0-3 3c0 .7.2 1.4.6 2"/><path d="M12 15a3 3 0 0 0 3-3c0-.7-.2-1.4-.6-2"/>'
+                    : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            });
         });
     </script>
 </body>
