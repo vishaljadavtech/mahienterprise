@@ -544,10 +544,18 @@
                     <div class="form-group">
                         <label for="includeTax">Include Tax</label>
                         <select id="includeTax">
-                            <option value="yes">Yes (Tax Invoice)</option>
-                            <option value="no">No (Regular Invoice)</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
                         </select>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="isProforma">Proforma Invoice</label>
+                    <select id="isProforma">
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                    </select>
                 </div>
 
                 <h3 class="section-title">Customer Information</h3>
@@ -766,9 +774,17 @@
                 const invoiceDate = document.getElementById('invoiceDate').value;
                 const placeOfSupply = document.getElementById('placeOfSupply').value || 'Gujarat (24)';
                 const includeTax = document.getElementById('includeTax').value === 'yes';
+                const isProforma = document.getElementById('isProforma').value === 'yes';
                 const customerName = document.getElementById('customerName').value || 'Swastik Digital';
                 const customerAddress = document.getElementById('customerAddress').value || 'Plot No. 285, 1st Floor, New Building Road No.2, G.I.D.C Sachin, Surat.(Guj)';
                 const customerGST = document.getElementById('customerGST').value || '24ADDF5229001ZM';
+
+                let invoiceTitle;
+                if (isProforma) {
+                    invoiceTitle = includeTax ? 'PROFORMA TAX INVOICE' : 'PROFORMA INVOICE';
+                } else {
+                    invoiceTitle = includeTax ? 'TAX INVOICE' : 'INVOICE';
+                }
 
                 const products = [];
                 const productEntries = document.querySelectorAll('.product-entry');
@@ -814,7 +830,6 @@
                 const grandTotal = totalTaxableAmount + totalTax;
                 const amountInWords = numberToWords(Math.round(grandTotal));
                 const formattedDate = formatDate(invoiceDate);
-                const invoiceTitle = includeTax ? 'TAX INVOICE' : 'INVOICE';
 
                 let tableRows = '';
                 products.forEach((product, index) => {
@@ -966,6 +981,7 @@
                 document.getElementById('invoiceDate').value = today;
                 document.getElementById('placeOfSupply').value = '';
                 document.getElementById('includeTax').value = 'yes';
+                document.getElementById('isProforma').value = 'no';
                 document.getElementById('customerName').value = '';
                 document.getElementById('customerAddress').value = '';
                 document.getElementById('customerGST').value = '';
